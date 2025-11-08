@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from 'react';
 import * as entryService from "../../services/entryService";
 import { UserContext } from '../../contexts/UserContext';
 
-const EntryDetails = () => {
+const EntryDetails = (props) => {
   const { entryId } = useParams();
    const { user } = useContext(UserContext);
   const [entry, setEntry] = useState(null);
@@ -39,10 +39,10 @@ const EntryDetails = () => {
         <p>Type: {entry.entryType}</p>
         <p>Category: {entry.entryCategory}</p>
         {entry.author._id === user._id && (
-              <>
-                <button>Delete</button>
-              </>
-            )}
+  <button onClick={() => props.handleDeleteEntry(entryId)}>
+    Delete
+  </button>
+)}
       </header>
 
       <section>
