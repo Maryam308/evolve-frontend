@@ -8,7 +8,7 @@ import Landing from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/Dashboard';
 // src/App.jsx
 
-import EntryList from './components/HootList/HootList';
+import EntryList from './components/EntryList/EntryList';
 
 import { UserContext } from './contexts/UserContext';
 
