@@ -40,10 +40,16 @@ const App = () => {
     }
   };
 
-  // 🔹 الخطوة الحالية (stub فقط)
   const handleDeleteEntry = async (entryId) => {
-    console.log("entryId", entryId);
-  };
+  try {
+    await entriesService.deleteEntry(entryId);
+    setEntries(entries.filter((entry) => entry._id !== entryId));
+    console.log(`Entry ${entryId} deleted successfully`);
+  } catch (err) {
+    console.error("Error deleting entry:", err);
+  }
+};
+
 
   return (
     <>
