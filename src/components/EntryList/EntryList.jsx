@@ -8,7 +8,7 @@ const EntryList = (props) => {
             <header>
               <h2>{entry.title}</h2>
             </header>
-            <p>{entry.description}</p>
+       
           </article>
         </Link>
       ))}
@@ -17,3 +17,4 @@ const EntryList = (props) => {
 };
 
 export default EntryList;
+
