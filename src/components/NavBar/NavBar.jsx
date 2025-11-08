@@ -1,31 +1,39 @@
-import { useContext } from 'react';
-import { Link } from 'react-router';
-
-import { UserContext } from '../../contexts/UserContext';
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
+import "./NavBar.css";
 
 const NavBar = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, handleSignout } = useContext(UserContext);
 
   const handleSignOut = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 
   return (
-    <nav>
-      {user ? (
-        <ul>
-          <li>Welcome, {user.username}</li>
-          <li><Link to='/'>Dashboard</Link></li>
-          <li><Link to='/' onClick={handleSignOut}>Sign Out</Link></li>
-        </ul>
-      ) : (
-        <ul>
-          <li><Link to='/'>Home</Link></li>
-          <li><Link to='/sign-in'>Sign In</Link></li>
-          <li><Link to='/sign-up'>Sign Up</Link></li>
-        </ul>
-      )}
+    <nav className="navbar">
+      <Link to="/" className="logo">
+        <div className="logo-icon">⚡</div>
+        <span>Evolve</span>
+      </Link>
+
+      <div className="nav-buttons">
+        {user ? (
+          <button onClick={handleSignOut} className="nav-button-secondary">
+            Sign Out
+          </button>
+        ) : (
+          <>
+            <Link to="/sign-in" className="nav-button-secondary">
+              Sign In
+            </Link>
+            <Link to="/sign-up" className="nav-button-primary">
+              Get Started
+            </Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 };
