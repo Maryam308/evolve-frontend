@@ -1,5 +1,4 @@
 import { useContext, useState, useEffect } from "react";
-
 import { Routes, Route } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
@@ -17,12 +16,11 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const [isFormOpen, setIsFormOpen] = useState(false);
-
   const [entries, setEntries] = useState([]);
+
   useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
-
       setEntries(entriesData);
     };
     if (user) fetchAllEntries();
@@ -35,25 +33,31 @@ const App = () => {
   const handleAddEntry = async (formData) => {
     try {
       const newEntry = await entriesService.create(formData);
-      if (newEntry.err) {
-        throw new Error(newEntry.err);
-      }
+      if (newEntry.err) throw new Error(newEntry.err);
       setIsFormOpen(false);
     } catch (err) {
       console.log(err);
     }
   };
 
+  // 🔹 الخطوة الحالية (stub فقط)
+  const handleDeleteEntry = async (entryId) => {
+    console.log("entryId", entryId);
+  };
+
   return (
     <>
       <NavBar />
+
       <Routes>
         <Route path="/" element={user ? <Dashboard /> : <Landing />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
-
         <Route path="/entries" element={<EntryList entries={entries} />} />
-        <Route path="/entries/:entryId" element={<EntryDetails />} />
+        <Route
+          path="/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
       </Routes>
 
       {user && (
@@ -69,3 +73,4 @@ const App = () => {
 };
 
 export default App;
+
