@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -15,6 +15,7 @@ import * as entriesService from "./services/entryService";
 
 const App = () => {
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
 
@@ -26,30 +27,29 @@ const App = () => {
     if (user) fetchAllEntries();
   }, [user]);
 
-  const handleFormView = () => {
-    setIsFormOpen(!isFormOpen);
-  };
+  const handleFormView = () => setIsFormOpen(!isFormOpen);
 
   const handleAddEntry = async (formData) => {
     try {
       const newEntry = await entriesService.create(formData);
       if (newEntry.err) throw new Error(newEntry.err);
       setIsFormOpen(false);
+      setEntries((prev) => [...prev, newEntry]);
     } catch (err) {
       console.log(err);
     }
   };
 
   const handleDeleteEntry = async (entryId) => {
-  try {
-    await entriesService.deleteEntry(entryId);
-    setEntries(entries.filter((entry) => entry._id !== entryId));
-    console.log(`Entry ${entryId} deleted successfully`);
-  } catch (err) {
-    console.error("Error deleting entry:", err);
-  }
-};
-
+    try {
+      await entriesService.deleteEntry(entryId);
+      setEntries(entries.filter((entry) => entry._id !== entryId));
+      console.log(`Entry ${entryId} deleted successfully`);
+      navigate("/entries"); // يرجع لقائمة الإدخالات بعد الحذف
+    } catch (err) {
+      console.error("Error deleting entry:", err);
+    }
+  };
 
   return (
     <>
@@ -79,4 +79,3 @@ const App = () => {
 };
 
 export default App;
-
