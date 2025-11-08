@@ -15,4 +15,6 @@ const EntryList = (props) => {
     </main>
   );
 };
+
 export default EntryList;
+
