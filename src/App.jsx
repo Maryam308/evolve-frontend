@@ -1,8 +1,6 @@
-
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from "react";
 
 import { Routes, Route } from "react-router-dom";
-
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -10,8 +8,8 @@ import SignInForm from "./components/SignInForm/SignInForm";
 import Landing from "./components/Landing/Landing";
 import Dashboard from "./components/Dashboard/Dashboard";
 import EntryForm from "./components/EntryForm/EntryForm";
-import EntryList from './components/EntryList/EntryList';
-
+import EntryList from "./components/EntryList/EntryList";
+import EntryDetails from "./components/EntryDetails/EntryDetails";
 
 import { UserContext } from "./contexts/UserContext";
 import * as entriesService from "./services/entryService";
@@ -20,12 +18,11 @@ const App = () => {
   const { user } = useContext(UserContext);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-
-const [entries, setEntries] = useState([]);
- useEffect(() => {
+  const [entries, setEntries] = useState([]);
+  useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
-      console.log("Fetched entries data:", entriesData);
+
       setEntries(entriesData);
     };
     if (user) fetchAllEntries();
@@ -54,12 +51,10 @@ const [entries, setEntries] = useState([]);
         <Route path="/" element={user ? <Dashboard /> : <Landing />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
-      
 
-<Route path='/entries' element={<EntryList entries={entries} />} />
-
+        <Route path="/entries" element={<EntryList entries={entries} />} />
+        <Route path="/entries/:entryId" element={<EntryDetails />} />
       </Routes>
-
 
       {user && (
         <div>
@@ -74,5 +69,3 @@ const [entries, setEntries] = useState([]);
 };
 
 export default App;
-
-
