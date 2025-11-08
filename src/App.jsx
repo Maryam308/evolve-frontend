@@ -19,6 +19,7 @@ const App = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
 
+  // Fetch all entries when user logs in
   useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
@@ -27,8 +28,10 @@ const App = () => {
     if (user) fetchAllEntries();
   }, [user]);
 
+  // Toggle entry form
   const handleFormView = () => setIsFormOpen(!isFormOpen);
 
+  // Add new entry
   const handleAddEntry = async (formData) => {
     try {
       const newEntry = await entriesService.create(formData);
@@ -40,12 +43,13 @@ const App = () => {
     }
   };
 
+  // Delete entry
   const handleDeleteEntry = async (entryId) => {
     try {
       await entriesService.deleteEntry(entryId);
       setEntries(entries.filter((entry) => entry._id !== entryId));
       console.log(`Entry ${entryId} deleted successfully`);
-      navigate("/entries"); // يرجع لقائمة الإدخالات بعد الحذف
+      navigate("/entries");
     } catch (err) {
       console.error("Error deleting entry:", err);
     }

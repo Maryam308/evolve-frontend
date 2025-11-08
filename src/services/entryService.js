@@ -37,6 +37,7 @@ const show = async (entryId) => {
     console.log(error);
   }
 };
+
 const createReflection = async (entryId, reflectionFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}/reflections`, {
@@ -52,4 +53,21 @@ const createReflection = async (entryId, reflectionFormData) => {
     console.log(error);
   }
 };
-export { index, create, show, createReflection };
+
+const deleteEntry = async (entryId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${entryId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Failed to delete entry");
+    return res.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { index, create, show, createReflection, deleteEntry };
