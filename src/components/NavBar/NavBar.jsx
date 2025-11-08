@@ -21,9 +21,15 @@ const NavBar = () => {
 
       <div className="nav-buttons">
         {user ? (
+          <div>
           <button onClick={handleSignOut} className="nav-button-secondary">
             Sign Out
           </button>
+            <Link to="/entries" className="nav-button-secondary">
+              Entries
+            </Link>
+          </div>
+
         ) : (
           <>
             <Link to="/sign-in" className="nav-button-secondary">
