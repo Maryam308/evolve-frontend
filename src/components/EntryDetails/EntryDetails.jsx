@@ -1,15 +1,18 @@
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from 'react';
 import * as entryService from "../../services/entryService";
+import { UserContext } from '../../contexts/UserContext';
 
 const EntryDetails = () => {
   const { entryId } = useParams();
+   const { user } = useContext(UserContext);
   const [entry, setEntry] = useState(null);
 
   useEffect(() => {
     const fetchEntry = async () => {
       const entryData = await entryService.show(entryId);
       setEntry(entryData);
+      
     };
     fetchEntry();
   }, [entryId]);
@@ -35,6 +38,11 @@ const EntryDetails = () => {
         </p>
         <p>Type: {entry.entryType}</p>
         <p>Category: {entry.entryCategory}</p>
+        {entry.author._id === user._id && (
+              <>
+                <button>Delete</button>
+              </>
+            )}
       </header>
 
       <section>
