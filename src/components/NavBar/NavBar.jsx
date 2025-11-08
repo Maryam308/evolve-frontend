@@ -12,6 +12,7 @@ const NavBar = () => {
   };
 
   return (
+
     <nav className="navbar">
       <Link to="/" className="logo">
         <div className="logo-icon">⚡</div>
@@ -34,6 +35,7 @@ const NavBar = () => {
           </>
         )}
       </div>
+
     </nav>
   );
 };

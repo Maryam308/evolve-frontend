@@ -1,12 +1,15 @@
 import { useState, useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 
+import EntryList from './components/EntryList/EntryList';
+
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
 import SignInForm from "./components/SignInForm/SignInForm";
 import Landing from "./components/Landing/Landing";
 import Dashboard from "./components/Dashboard/Dashboard";
 import EntryForm from "./components/EntryForm/EntryForm";
+
 
 import { UserContext } from "./contexts/UserContext";
 import * as entryService from "./services/entryService";
@@ -53,3 +56,5 @@ const App = () => {
 };
 
 export default App;
+
+
