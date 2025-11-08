@@ -25,7 +25,7 @@ const [entries, setEntries] = useState([]);
  useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
-  
+      console.log("Fetched entries data:", entriesData);
       setEntries(entriesData);
     };
     if (user) fetchAllEntries();
