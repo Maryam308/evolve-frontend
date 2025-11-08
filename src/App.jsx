@@ -6,6 +6,9 @@ import SignUpForm from './components/SignUpForm/SignUpForm';
 import SignInForm from './components/SignInForm/SignInForm';
 import Landing from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/Dashboard';
+// src/App.jsx
+
+import EntryList from './components/HootList/HootList';
 
 import { UserContext } from './contexts/UserContext';
 
@@ -25,3 +28,5 @@ const App = () => {
 };
 
 export default App;
+
+
