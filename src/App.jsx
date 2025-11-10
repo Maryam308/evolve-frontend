@@ -19,7 +19,6 @@ const App = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
 
-
   useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
@@ -28,9 +27,7 @@ const App = () => {
     if (user) fetchAllEntries();
   }, [user]);
 
-
   const handleFormView = () => setIsFormOpen(!isFormOpen);
-
 
   const handleAddEntry = async (formData) => {
     try {
@@ -43,10 +40,11 @@ const App = () => {
     }
   };
 
- 
   const handleDeleteEntry = async (entryId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-    if (!confirmDelete) return; 
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this item?"
+    );
+    if (!confirmDelete) return;
 
     try {
       await entriesService.deleteEntry(entryId);
@@ -64,12 +62,30 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/entries" element={<EntryList entries={entries} />} />
         <Route
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
+        {/* Placeholder routes for navigation tabs */}
+        <Route
+          path="/achievements"
+          element={
+            <div style={{ padding: "40px", textAlign: "center" }}>
+              Achievements page coming soon!
+            </div>
+          }
+        />
+        <Route
+          path="/lessons"
+          element={
+            <div style={{ padding: "40px", textAlign: "center" }}>
+              Lessons page coming soon!
+            </div>
+          }
         />
       </Routes>
 
