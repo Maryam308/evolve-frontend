@@ -1,70 +1,107 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router';
-
-import { signIn } from '../../services/authService';
-
-import { UserContext } from '../../contexts/UserContext';
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/UserContext";
+import * as authService from "../../services/authService";
+import "./SignInForm.css";
 
 const SignInForm = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
-  const [message, setMessage] = useState('');
+
+  const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
 
-  const handleChange = (evt) => {
-    setMessage('');
-    setFormData({ ...formData, [evt.target.name]: evt.target.value });
+  const updateMessage = (msg) => {
+    setMessage(msg);
   };
 
-  const handleSubmit = async (evt) => {
-    evt.preventDefault();
+  const handleChange = (e) => {
+    setMessage("");
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const signedInUser = await signIn(formData);
-      setUser(signedInUser);
-      navigate('/');
+      const user = await authService.signin(formData);
+      if (user.err) {
+        throw new Error(user.err);
+      }
+      setUser(user);
+      navigate("/");
     } catch (err) {
-      setMessage(err.message);
+      updateMessage(err.message);
     }
   };
 
+  const handleClose = () => {
+    navigate("/");
+  };
+
   return (
-    <main>
-      <h1>Sign In</h1>
-      <p>{message}</p>
-      <form autoComplete='off' onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor='email'>Username:</label>
-          <input
-            type='text'
-            autoComplete='off'
-            id='username'
-            value={formData.username}
-            name='username'
-            onChange={handleChange}
-            required
-          />
+    <div className="modal-overlay" onClick={handleClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={handleClose}>
+          ×
+        </button>
+
+        <div className="modal-header">
+          <div className="logo-container">
+            <div className="logo-icon">
+              {/* Add your logo image here later */}
+            </div>
+            <span className="logo-text">Evolve</span>
+          </div>
+
+          <h2 className="modal-title">Welcome Back !</h2>
+          <p className="modal-subtitle">Sign in to continue</p>
         </div>
-        <div>
-          <label htmlFor='password'>Password:</label>
-          <input
-            type='password'
-            autoComplete='off'
-            id='password'
-            value={formData.password}
-            name='password'
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <button>Sign In</button>
-          <button onClick={() => navigate('/')}>Cancel</button>
-        </div>
-      </form>
-    </main>
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+              placeholder="Name"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="****"
+            />
+          </div>
+
+          {message && <p className="error-message">{message}</p>}
+
+          <button type="submit" className="submit-button">
+            Sign In
+          </button>
+
+          <p className="form-footer">
+            Don't have account?{" "}
+            <Link to="/sign-up" className="form-link">
+              Sign Up
+            </Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 
