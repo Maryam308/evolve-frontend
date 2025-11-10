@@ -1,6 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -16,44 +15,62 @@ import * as entriesService from "./services/entryService";
 
 const App = () => {
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
-
   const [entries, setEntries] = useState([]);
+
+
   useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
-
       setEntries(entriesData);
     };
     if (user) fetchAllEntries();
   }, [user]);
 
-  const handleFormView = () => {
-    setIsFormOpen(!isFormOpen);
-  };
+
+  const handleFormView = () => setIsFormOpen(!isFormOpen);
+
 
   const handleAddEntry = async (formData) => {
     try {
       const newEntry = await entriesService.create(formData);
-      if (newEntry.err) {
-        throw new Error(newEntry.err);
-      }
+      if (newEntry.err) throw new Error(newEntry.err);
       setIsFormOpen(false);
+      setEntries((prev) => [...prev, newEntry]);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+ 
+  const handleDeleteEntry = async (entryId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+    if (!confirmDelete) return; 
+
+    try {
+      await entriesService.deleteEntry(entryId);
+      setEntries(entries.filter((entry) => entry._id !== entryId));
+      console.log(`Entry ${entryId} deleted successfully`);
+      navigate("/entries");
+    } catch (err) {
+      console.error("Error deleting entry:", err);
     }
   };
 
   return (
     <>
       <NavBar />
+
       <Routes>
         <Route path="/" element={user ? <Dashboard /> : <Landing />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
-
         <Route path="/entries" element={<EntryList entries={entries} />} />
-        <Route path="/entries/:entryId" element={<EntryDetails />} />
+        <Route
+          path="/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
       </Routes>
 
       {user && (
