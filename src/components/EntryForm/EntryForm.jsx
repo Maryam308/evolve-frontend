@@ -1,10 +1,11 @@
 import { useState } from "react";
+import "./EntryForm.css";
 
 const EntryForm = (props) => {
   const initialState = {
     title: "",
     description: "",
-    entryType: "Lesson",
+    entryType: props.defaultType || "Lesson",
     entryCategory: "Career",
     initialSituation: "",
     actionsImplemented: "",
@@ -35,12 +36,12 @@ const EntryForm = (props) => {
   const isAchievement = formData.entryType === "Achievement";
 
   return (
-    <div>
-      <h1>Create New Entry</h1>
+    <div className="entry-form-container">
+      <h1 className="form-title">Create New Entry</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="entry-form">
         {/* Entry Type */}
-        <div>
+        <div className="form-group">
           <label htmlFor="entryType">Type</label>
           <select
             id="entryType"
@@ -48,6 +49,7 @@ const EntryForm = (props) => {
             value={formData.entryType}
             onChange={handleChange}
             required
+            className="form-select"
           >
             <option value="Lesson">Lesson</option>
             <option value="Achievement">Achievement</option>
@@ -55,7 +57,7 @@ const EntryForm = (props) => {
         </div>
 
         {/* Entry Category */}
-        <div>
+        <div className="form-group">
           <label htmlFor="entryCategory">Category</label>
           <select
             id="entryCategory"
@@ -63,6 +65,7 @@ const EntryForm = (props) => {
             value={formData.entryCategory}
             onChange={handleChange}
             required
+            className="form-select"
           >
             <option value="Career">Career</option>
             <option value="Relationships">Relationships</option>
@@ -72,7 +75,7 @@ const EntryForm = (props) => {
         </div>
 
         {/* Title */}
-        <div>
+        <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
             id="title"
@@ -82,11 +85,12 @@ const EntryForm = (props) => {
             value={formData.title}
             onChange={handleChange}
             required
+            className="form-input"
           />
         </div>
 
         {/* Description */}
-        <div>
+        <div className="form-group">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
@@ -96,6 +100,7 @@ const EntryForm = (props) => {
             onChange={handleChange}
             required
             rows="4"
+            className="form-textarea"
           />
         </div>
 
@@ -103,7 +108,7 @@ const EntryForm = (props) => {
         {isLesson && (
           <>
             {/* Initial Situation (How I Felt) */}
-            <div>
+            <div className="form-group">
               <label htmlFor="initialSituation">How I Felt</label>
               <textarea
                 id="initialSituation"
@@ -112,11 +117,12 @@ const EntryForm = (props) => {
                 value={formData.initialSituation}
                 onChange={handleChange}
                 rows="3"
+                className="form-textarea"
               />
             </div>
 
             {/* Improvement Plan (What I'd Do Differently) */}
-            <div>
+            <div className="form-group">
               <label htmlFor="improvementPlan">What I'd Do Differently</label>
               <textarea
                 id="improvementPlan"
@@ -125,6 +131,7 @@ const EntryForm = (props) => {
                 value={formData.improvementPlan}
                 onChange={handleChange}
                 rows="3"
+                className="form-textarea"
               />
             </div>
           </>
@@ -134,7 +141,7 @@ const EntryForm = (props) => {
         {isAchievement && (
           <>
             {/* Actions Implemented (How I Got There) */}
-            <div>
+            <div className="form-group">
               <label htmlFor="actionsImplemented">How I Got There</label>
               <textarea
                 id="actionsImplemented"
@@ -143,11 +150,12 @@ const EntryForm = (props) => {
                 value={formData.actionsImplemented}
                 onChange={handleChange}
                 rows="3"
+                className="form-textarea"
               />
             </div>
 
             {/* Key Outcomes (What Worked Well) */}
-            <div>
+            <div className="form-group">
               <label htmlFor="keyOutcomes">What Worked Well</label>
               <textarea
                 id="keyOutcomes"
@@ -156,12 +164,13 @@ const EntryForm = (props) => {
                 value={formData.keyOutcomes}
                 onChange={handleChange}
                 rows="3"
+                className="form-textarea"
               />
             </div>
           </>
         )}
 
-        <button type="submit">
+        <button type="submit" className="form-submit-button">
           {props.selected ? "Update Entry" : "Create Entry"}
         </button>
       </form>
