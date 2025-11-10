@@ -6,9 +6,9 @@ import SignUpForm from "./components/SignUpForm/SignUpForm";
 import SignInForm from "./components/SignInForm/SignInForm";
 import Landing from "./components/Landing/Landing";
 import Dashboard from "./components/Dashboard/Dashboard";
-import EntryForm from "./components/EntryForm/EntryForm";
 import EntryList from "./components/EntryList/EntryList";
 import EntryDetails from "./components/EntryDetails/EntryDetails";
+import EntryListPage from "./components/EntryListPage/EntryListPage";
 
 import { UserContext } from "./contexts/UserContext";
 import * as entriesService from "./services/entryService";
@@ -16,7 +16,6 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
 
   useEffect(() => {
@@ -26,19 +25,6 @@ const App = () => {
     };
     if (user) fetchAllEntries();
   }, [user]);
-
-  const handleFormView = () => setIsFormOpen(!isFormOpen);
-
-  const handleAddEntry = async (formData) => {
-    try {
-      const newEntry = await entriesService.create(formData);
-      if (newEntry.err) throw new Error(newEntry.err);
-      setIsFormOpen(false);
-      setEntries((prev) => [...prev, newEntry]);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleDeleteEntry = async (entryId) => {
     const confirmDelete = window.confirm(
@@ -50,7 +36,7 @@ const App = () => {
       await entriesService.deleteEntry(entryId);
       setEntries(entries.filter((entry) => entry._id !== entryId));
       console.log(`Entry ${entryId} deleted successfully`);
-      navigate("/entries");
+      navigate("/dashboard");
     } catch (err) {
       console.error("Error deleting entry:", err);
     }
@@ -70,33 +56,13 @@ const App = () => {
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        {/* Placeholder routes for navigation tabs */}
+        {/* Entry list pages with form popups */}
         <Route
           path="/achievements"
-          element={
-            <div style={{ padding: "40px", textAlign: "center" }}>
-              Achievements page coming soon!
-            </div>
-          }
+          element={<EntryListPage pageType="achievement" />}
         />
-        <Route
-          path="/lessons"
-          element={
-            <div style={{ padding: "40px", textAlign: "center" }}>
-              Lessons page coming soon!
-            </div>
-          }
-        />
+        <Route path="/lessons" element={<EntryListPage pageType="lesson" />} />
       </Routes>
-
-      {user && (
-        <div>
-          <button onClick={handleFormView}>
-            {isFormOpen ? "Close Form" : "Create New Entry"}
-          </button>
-          {isFormOpen && <EntryForm handleAddEntry={handleAddEntry} />}
-        </div>
-      )}
     </>
   );
 };
