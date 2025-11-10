@@ -32,6 +32,44 @@
   font-size: 1.2rem;
 }
 
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  margin-left: 40px;
+}
+
+.nav-tab {
+  padding: 10px 24px;
+  border-radius: 20px;
+  text-decoration: none;
+  color: #000;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.nav-tab:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.nav-tab.active {
+  background: #8b5cf6;
+  color: white;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-greeting {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+}
+
 .nav-buttons {
   display: flex;
   gap: 16px;
