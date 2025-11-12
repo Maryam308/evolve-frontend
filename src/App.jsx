@@ -16,9 +16,9 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
-
 
   useEffect(() => {
     const fetchAllEntries = async () => {
@@ -28,9 +28,7 @@ const App = () => {
     if (user) fetchAllEntries();
   }, [user]);
 
-
   const handleFormView = () => setIsFormOpen(!isFormOpen);
-
 
   const handleAddEntry = async (formData) => {
     try {
@@ -43,21 +41,6 @@ const App = () => {
     }
   };
 
- 
-  const handleDeleteEntry = async (entryId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-    if (!confirmDelete) return; 
-
-    try {
-      await entriesService.deleteEntry(entryId);
-      setEntries(entries.filter((entry) => entry._id !== entryId));
-      console.log(`Entry ${entryId} deleted successfully`);
-      navigate("/entries");
-    } catch (err) {
-      console.error("Error deleting entry:", err);
-    }
-  };
-
   return (
     <>
       <NavBar />
@@ -67,15 +50,15 @@ const App = () => {
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/entries" element={<EntryList entries={entries} />} />
-        <Route
-          path="/entries/:entryId"
-          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
-        />
+        <Route path="/entries/:entryId" element={<EntryDetails />} />
       </Routes>
 
       {user && (
-        <div>
-          <button onClick={handleFormView}>
+        <div className="text-center mt-6">
+          <button
+            onClick={handleFormView}
+            className="bg-beige-200 px-6 py-2 rounded-xl hover:bg-beige-300 transition"
+          >
             {isFormOpen ? "Close Form" : "Create New Entry"}
           </button>
           {isFormOpen && <EntryForm handleAddEntry={handleAddEntry} />}

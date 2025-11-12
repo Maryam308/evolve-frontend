@@ -1,118 +1,65 @@
-import { useParams } from "react-router";
-import { useState, useEffect, useContext } from "react";
-import * as entriesService from "../../services/entryService";
-import { UserContext } from "../../contexts/UserContext";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import * as entriesService from "../../services/entryService"; 
+import DeletePopup from "../DeletePopup/DeletePopup";
 
-const EntryDetails = (props) => {
+const EntryDetails = () => {
   const { entryId } = useParams();
-  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
+  const [showPopup, setShowPopup] = useState(false); 
 
   useEffect(() => {
     const fetchEntry = async () => {
-      const entryData = await entriesService.show(entryId);
-      setEntry(entryData);
+      try {
+        const data = await entriesService.show(entryId);
+        setEntry(data);
+      } catch (err) {
+        console.error("Error fetching entry:", err);
+      }
     };
     fetchEntry();
   }, [entryId]);
 
-  const handleAddReflection = async (reflectionFormData) => {
-    const newReflection = await entriesService.createReflection(
-      entryId,
-      reflectionFormData
-    );
-    setEntry(newReflection);
+  if (!entry) return <p>Loading...</p>;
+
+  const handleDeleteClick = () => setShowPopup(true);
+
+
+  const handleConfirmDelete = async () => {
+    try {
+      await entriesService.deleteEntry(entry._id);
+      navigate("/entries"); 
+    } catch (err) {
+      console.error("Error deleting entry:", err);
+    } finally {
+      setShowPopup(false);
+    }
   };
 
-  if (!entry) return <main>Loading...</main>;
+ 
+  const handleCancelDelete = () => setShowPopup(false);
 
   return (
-    <main>
-      <header>
-        <h1>{entry.title}</h1>
-        <p>{entry.description}</p>
-        <p>
-          {entry.author.username} posted on{" "}
-          {new Date(entry.createdAt).toLocaleDateString()}
-        </p>
-        <p>Type: {entry.entryType}</p>
-        <p>Category: {entry.entryCategory}</p>
+    <div className="max-w-2xl mx-auto p-6 border rounded shadow mt-6">
+      <h2 className="text-2xl font-bold mb-4">{entry.title}</h2>
+      <p className="text-gray-700 mb-4">{entry.description}</p>
 
-        {entry.author._id === user._id && (
-          <button onClick={() => props.handleDeleteEntry(entryId)}>
-            Delete
-          </button>
-        )}
-      </header>
+      <button
+        onClick={handleDeleteClick}
+        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      >
+        Delete
+      </button>
 
-      <section>
-        <h2>Entry Details</h2>
-        {entry.initialSituation && (
-          <div>
-            <h3>Initial Situation</h3>
-            <p>{entry.initialSituation}</p>
-          </div>
-        )}
-        {entry.actionsImplemented && (
-          <div>
-            <h3>Actions Implemented</h3>
-            <p>{entry.actionsImplemented}</p>
-          </div>
-        )}
-        {entry.keyOutcomes && (
-          <div>
-            <h3>Key Outcomes</h3>
-            <p>{entry.keyOutcomes}</p>
-          </div>
-        )}
-        {entry.improvementPlan && (
-          <div>
-            <h3>Improvement Plan</h3>
-            <p>{entry.improvementPlan}</p>
-          </div>
-        )}
-      </section>
-
-      <section>
-        <h2>Reflections</h2>
-        <ReflectionForm handleAddReflection={handleAddReflection} />
-        {!entry.reflections.length && <p>There are no reflections.</p>}
-        {entry.reflections.map((reflection) => (
-          <article key={reflection._id}>
-            <p>{reflection.reflectionText}</p>
-          </article>
-        ))}
-      </section>
-    </main>
-  );
-};
-
-// Reflection Form Component
-const ReflectionForm = ({ handleAddReflection }) => {
-  const [formData, setFormData] = useState({ reflectionText: "" });
-
-  const handleChange = (evt) => {
-    setFormData({ ...formData, [evt.target.name]: evt.target.value });
-  };
-
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    handleAddReflection(formData);
-    setFormData({ reflectionText: "" });
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="reflectionText">Add a reflection:</label>
-      <textarea
-        required
-        name="reflectionText"
-        id="reflectionText"
-        value={formData.reflectionText}
-        onChange={handleChange}
-      />
-      <button type="submit">Submit</button>
-    </form>
+      {/* Show popup when requested */}
+      {showPopup && (
+        <DeletePopup
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+    </div>
   );
 };
 
