@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -16,7 +16,14 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [entries, setEntries] = useState([]);
+
+  // Check if we're on modal overlay pages
+  const isModalPage =
+    location.pathname.includes("/entries/") ||
+    location.pathname === "/sign-in" ||
+    location.pathname === "/sign-up";
 
   useEffect(() => {
     const fetchAllEntries = async () => {
@@ -46,22 +53,34 @@ const App = () => {
     <>
       <NavBar />
 
+      {/* Main content area */}
+      <div
+        className={isModalPage ? "main-content-with-overlay" : "main-content"}
+      >
+        <Routes>
+          <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/entries" element={<EntryList entries={entries} />} />
+          {/* Entry list pages with form popups */}
+          <Route
+            path="/achievements"
+            element={<EntryListPage pageType="achievement" />}
+          />
+          <Route
+            path="/lessons"
+            element={<EntryListPage pageType="lesson" />}
+          />
+        </Routes>
+      </div>
+
+      {/* Modal overlays - rendered outside main content */}
       <Routes>
-        <Route path="/" element={user ? <Dashboard /> : <Landing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/sign-up" element={<SignUpForm />} />
-        <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/entries" element={<EntryList entries={entries} />} />
         <Route
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        {/* Entry list pages with form popups */}
-        <Route
-          path="/achievements"
-          element={<EntryListPage pageType="achievement" />}
-        />
-        <Route path="/lessons" element={<EntryListPage pageType="lesson" />} />
+        <Route path="/sign-in" element={<SignInForm />} />
+        <Route path="/sign-up" element={<SignUpForm />} />
       </Routes>
     </>
   );
