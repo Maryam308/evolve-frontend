@@ -13,8 +13,15 @@ const EntryDetails = (props) => {
 
   useEffect(() => {
     const fetchEntry = async () => {
-      const entryData = await entriesService.show(entryId);
-      setEntry(entryData);
+      if (!entryId || entryId === "undefined") {
+        return;
+      }
+      try {
+        const entryData = await entriesService.show(entryId);
+        setEntry(entryData);
+      } catch (error) {
+        console.error("Error fetching entry:", error);
+      }
     };
     fetchEntry();
   }, [entryId]);
@@ -35,13 +42,19 @@ const EntryDetails = (props) => {
   };
 
   const handleDelete = async () => {
-    await props.handleDeleteEntry(entryId);
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this entry?"
+    );
+    if (confirmed) {
+      await props.handleDeleteEntry(entryId);
+    }
   };
 
   if (!entry) {
     return (
-      <div className="modal-overlay">
+      <div className="details-overlay">
         <div className="loading-card">
+          <div className="loading-spinner"></div>
           <p>Loading...</p>
         </div>
       </div>
@@ -88,14 +101,18 @@ const EntryDetails = (props) => {
   }
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+    <div className="details-overlay" onClick={handleClose}>
+      <div className="details-container" onClick={(e) => e.stopPropagation()}>
         {/* Close and Delete buttons */}
-        <div className="action-buttons">
-          {entry.author._id === user._id && (
-            <button onClick={handleDelete} className="delete-button">
+        <div className="details-actions">
+          {user && entry.author && entry.author._id === user._id && (
+            <button
+              onClick={handleDelete}
+              className="details-delete-btn"
+              title="Delete entry"
+            >
               <svg
-                className="icon"
+                className="btn-icon"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -109,9 +126,13 @@ const EntryDetails = (props) => {
               </svg>
             </button>
           )}
-          <button onClick={handleClose} className="close-button">
+          <button
+            onClick={handleClose}
+            className="details-close-btn"
+            title="Close"
+          >
             <svg
-              className="icon"
+              className="btn-icon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -127,18 +148,22 @@ const EntryDetails = (props) => {
         </div>
 
         {/* Content */}
-        <div className="modal-content">
+        <div className="details-content">
           {/* Header */}
-          <div className="entry-header">
-            <div className="icon-box">
-              <span className="icon-emoji">{icon}</span>
+          <div className="details-header">
+            <div
+              className={`details-icon-box ${
+                isAchievement ? "icon-achievement" : "icon-lesson"
+              }`}
+            >
+              <span className="details-icon-emoji">{icon}</span>
             </div>
-            <div className="header-text">
-              <h1 className="entry-title">{entry.title}</h1>
-              <div className="entry-metadata">
-                <div className="meta-item">
+            <div className="details-header-text">
+              <h1 className="details-title">{entry.title}</h1>
+              <div className="details-meta">
+                <div className="meta-tag">
                   <svg
-                    className="small-icon"
+                    className="meta-icon"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -158,9 +183,9 @@ const EntryDetails = (props) => {
                     })}
                   </span>
                 </div>
-                <div className="meta-item">
+                <div className="meta-tag">
                   <svg
-                    className="small-icon"
+                    className="meta-icon"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -175,7 +200,7 @@ const EntryDetails = (props) => {
                   <span>{entry.entryCategory}</span>
                 </div>
                 <span
-                  className={`entry-badge ${
+                  className={`details-badge ${
                     isAchievement ? "badge-achievement" : "badge-lesson"
                   }`}
                 >
@@ -187,64 +212,83 @@ const EntryDetails = (props) => {
 
           {/* Description */}
           {entry.description && (
-            <div className="description-section">
-              <h2 className="section-title">Description</h2>
-              <p className="description-text">{entry.description}</p>
+            <div className="details-description">
+              <h2 className="details-section-title">Description</h2>
+              <p className="details-description-text">{entry.description}</p>
             </div>
           )}
 
           {/* Dynamic Sections */}
-          <div className="sections-container">
-            {sections.map((section, index) => (
-              <div
-                key={index}
-                className={`colored-section ${section.className}`}
-              >
-                <h3 className="colored-section-title">
-                  <svg className="section-icon" viewBox="0 0 20 20">
-                    <circle cx="10" cy="10" r="8" opacity="0.2" />
-                    <circle cx="10" cy="10" r="3" />
-                  </svg>
-                  {section.title}
-                </h3>
-                <p className="colored-section-content">{section.content}</p>
-              </div>
-            ))}
-          </div>
+          {sections.length > 0 && (
+            <div className="details-sections">
+              {sections.map((section, index) => (
+                <div
+                  key={index}
+                  className={`details-section ${section.className}`}
+                >
+                  <h3 className="details-section-heading">
+                    <svg className="section-icon" viewBox="0 0 20 20">
+                      <circle cx="10" cy="10" r="8" opacity="0.2" />
+                      <circle cx="10" cy="10" r="3" />
+                    </svg>
+                    {section.title}
+                  </h3>
+                  <p className="details-section-text">{section.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Reflections Section */}
-          <div className="reflections-section">
-            <h2 className="reflections-title">
+          <div className="details-reflections">
+            <h2 className="details-reflections-title">
+              <svg
+                className="reflections-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
               Reflections ({entry.reflections?.length || 0})
             </h2>
 
             {/* Reflection Form */}
-            <div className="reflection-form">
+            <form onSubmit={handleAddReflection} className="reflection-form">
               <input
                 type="text"
                 value={reflectionText}
                 onChange={(e) => setReflectionText(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleAddReflection(e);
-                  }
-                }}
                 placeholder="Add a reflection..."
                 className="reflection-input"
               />
-              <button onClick={handleAddReflection} className="add-button">
+              <button type="submit" className="reflection-btn">
                 Add
               </button>
-            </div>
+            </form>
 
             {/* Reflections List */}
             {!entry.reflections?.length ? (
-              <p className="no-reflections">No reflections yet</p>
+              <p className="no-reflections">No reflections yet.</p>
             ) : (
               <div className="reflections-list">
                 {entry.reflections.map((reflection) => (
                   <div key={reflection._id} className="reflection-item">
-                    {reflection.reflectionText}
+                    <svg
+                      className="reflection-quote-icon"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                    </svg>
+                    <p className="reflection-text">
+                      {reflection.reflectionText}
+                    </p>
                   </div>
                 ))}
               </div>

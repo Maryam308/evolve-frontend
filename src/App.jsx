@@ -43,7 +43,7 @@ const App = () => {
       await entriesService.deleteEntry(entryId);
       setEntries(entries.filter((entry) => entry._id !== entryId));
       console.log(`Entry ${entryId} deleted successfully`);
-      navigate("/dashboard");
+      navigate(-1);
     } catch (err) {
       console.error("Error deleting entry:", err);
     }
@@ -61,7 +61,8 @@ const App = () => {
           <Route path="/" element={user ? <Dashboard /> : <Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/entries" element={<EntryList entries={entries} />} />
-          {/* Entry list pages with form popups */}
+          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
+          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
           <Route
             path="/achievements"
             element={<EntryListPage pageType="achievement" />}
@@ -70,17 +71,18 @@ const App = () => {
             path="/lessons"
             element={<EntryListPage pageType="lesson" />}
           />
+          <Route path="/entries/:entryId" element={<Dashboard />} />
         </Routes>
       </div>
 
-      {/* Modal overlays - rendered outside main content */}
+      {/* Modal overlays */}
       <Routes>
         <Route
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/sign-up" element={<SignUpForm />} />
+        {!user && <Route path="/sign-in" element={<SignInForm />} />}
+        {!user && <Route path="/sign-up" element={<SignUpForm />} />}
       </Routes>
     </>
   );
