@@ -27,17 +27,17 @@ const EntryDetails = () => {
 
 
   const handleConfirmDelete = async () => {
-    try {
-      await entriesService.deleteEntry(entry._id);
-      navigate("/entries"); 
-    } catch (err) {
-      console.error("Error deleting entry:", err);
-    } finally {
-      setShowPopup(false);
-    }
-  };
+  try {
+    await entriesService.deleteEntry(entryId);
+    navigate("/entries");
+  } catch (err) {
+    console.error("Error deleting entry:", err);
+  } finally {
+    setShowPopup(false);
+  }
+};
 
- 
+
   const handleCancelDelete = () => setShowPopup(false);
 
   return (
