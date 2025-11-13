@@ -16,6 +16,9 @@ const EntryListPage = ({ pageType }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage] = useState(6); // Show 6 entries per page
 
+  // Sort state
+  const [sortOrder, setSortOrder] = useState("newest");
+
   const categories = [
     {
       id: "all",
@@ -148,18 +151,30 @@ const EntryListPage = ({ pageType }) => {
     }
   };
 
+  // Sort entries by date
+  const sortEntriesByDate = (entriesToSort, order) => {
+    return [...entriesToSort].sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return order === "newest" ? dateB - dateA : dateA - dateB;
+    });
+  };
+
   useEffect(() => {
-    if (selectedCategory === "all") {
-      setFilteredEntries(entries);
-    } else {
-      setFilteredEntries(
-        entries.filter(
-          (entry) => entry.entryCategory?.toLowerCase() === selectedCategory
-        )
+    let filtered = entries;
+
+    // Apply category filter
+    if (selectedCategory !== "all") {
+      filtered = entries.filter(
+        (entry) => entry.entryCategory?.toLowerCase() === selectedCategory
       );
     }
-    setCurrentPage(1); // Reset to first page when category changes
-  }, [selectedCategory, entries]);
+
+    // Apply sorting
+    const sorted = sortEntriesByDate(filtered, sortOrder);
+    setFilteredEntries(sorted);
+    setCurrentPage(1); // Reset to first page when category or sort changes
+  }, [selectedCategory, entries, sortOrder]);
 
   // Pagination logic
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -172,6 +187,11 @@ const EntryListPage = ({ pageType }) => {
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Handle sort change
+  const handleSortChange = (newSortOrder) => {
+    setSortOrder(newSortOrder);
+  };
 
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -267,6 +287,24 @@ const EntryListPage = ({ pageType }) => {
           </aside>
 
           <main className="entries-main">
+            {/* Sort Controls */}
+            {filteredEntries.length > 0 && (
+              <div className="sort-controls">
+                <label htmlFor="sort-select" className="sort-label">
+                  Sort by:
+                </label>
+                <select
+                  id="sort-select"
+                  value={sortOrder}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  className="sort-select"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                </select>
+              </div>
+            )}
+
             {filteredEntries.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">
