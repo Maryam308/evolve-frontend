@@ -1,13 +1,13 @@
-import { createContext, useState } from 'react';
+import { createContext, useState } from "react";
 
 const UserContext = createContext();
 
 const getUserFromToken = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   if (!token) return null;
 
-  return JSON.parse(atob(token.split('.')[1])).payload;
+  return JSON.parse(atob(token.split(".")[1])).payload;
 };
 
 function UserProvider({ children }) {
@@ -20,11 +20,7 @@ function UserProvider({ children }) {
 
   const value = { user, setUser, handleSignout };
 
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
-};
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+}
 
 export { UserProvider, UserContext };

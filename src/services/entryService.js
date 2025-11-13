@@ -73,7 +73,6 @@ const createReflection = async (entryId, reflectionFormData) => {
   }
 };
 
-
 const deleteEntry = async (entryId) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {

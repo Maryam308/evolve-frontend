@@ -8,7 +8,7 @@ const EntryList = ({ entries, onDelete }) => {
 
   const handleConfirmDelete = () => {
     if (selectedEntry) {
-      onDelete(selectedEntry._id); 
+      onDelete(selectedEntry._id);
       setSelectedEntry(null);
       setShowDelete(false);
     }
