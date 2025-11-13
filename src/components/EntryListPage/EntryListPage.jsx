@@ -16,7 +16,7 @@ const EntryListPage = ({ pageType }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage] = useState(6); // Show 6 entries per page
 
-  // Sorting state
+  // Sort state
   const [sortOrder, setSortOrder] = useState("newest");
 
   const categories = [
