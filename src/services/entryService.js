@@ -21,6 +21,8 @@ const create = async (entryFormData) => {
       },
       body: JSON.stringify(entryFormData),
     });
+
+    if (!res.ok) throw new Error("Failed to create entry");
     return res.json();
   } catch (error) {
     console.log(error);
@@ -37,6 +39,7 @@ const show = async (entryId) => {
     console.log(error);
   }
 };
+<<<<<<< HEAD
 const update = async (entryId, entryFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -66,6 +69,8 @@ const deleteEntry = async (entryId) => {
     console.log(error);
   }
 };
+=======
+>>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
 
 const createReflection = async (entryId, reflectionFormData) => {
   try {
@@ -83,4 +88,30 @@ const createReflection = async (entryId, reflectionFormData) => {
   }
 };
 
+<<<<<<< HEAD
 export { index, create, show, update, deleteEntry, createReflection };
+=======
+
+const deleteEntry = async (entryId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${entryId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete entry");
+
+    if (res.status === 204) return true;
+
+    const data = await res.json().catch(() => null);
+    return data;
+  } catch (error) {
+    console.log("Error deleting entry:", error);
+  }
+};
+
+export { index, create, show, createReflection, deleteEntry };
+>>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
