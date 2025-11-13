@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as entryService from "../../services/entryService";
 import EntryForm from "../EntryForm/EntryForm";
 import "./EntryListPage.css";
-
+import Footer from "../Footer/Footer";
 const EntryListPage = ({ pageType }) => {
   const navigate = useNavigate();
   const [entries, setEntries] = useState([]);
@@ -197,9 +197,7 @@ const EntryListPage = ({ pageType }) => {
         </div>
       </div>
 
-      <footer className="page-footer">
-        © All Rights Reserved - Evolve 2025
-      </footer>
+      <Footer />
 
       {/* Form Popup Modal */}
       {isFormOpen && (
@@ -216,6 +214,7 @@ const EntryListPage = ({ pageType }) => {
               defaultType={
                 pageType === "achievement" ? "Achievement" : "Lesson"
               }
+              onClose={handleCloseForm}
             />
           </div>
         </div>

@@ -8,7 +8,7 @@ const EntryForm = (props) => {
   const initialState = {
     title: "",
     description: "",
-    entryType: props.defaultType || "lesson",
+    entryType: props.defaultType || "Lesson", // Changed to capitalized
     entryCategory: "Career",
     initialSituation: "",
     actionsImplemented: "",
@@ -35,12 +35,16 @@ const EntryForm = (props) => {
   };
 
   const handleClose = () => {
-    navigate(-1);
+    if (props.onClose) {
+      props.onClose();
+    } else {
+      navigate(-1);
+    }
   };
 
   // Determine which fields to show based on entry type
-  const isLesson = formData.entryType === "lesson";
-  const isAchievement = formData.entryType === "achievement";
+  const isLesson = formData.entryType === "Lesson"; // Changed to capitalized
+  const isAchievement = formData.entryType === "Achievement"; // Changed to capitalized
 
   return (
     <div className="entry-form-overlay" onClick={handleClose}>
@@ -71,8 +75,9 @@ const EntryForm = (props) => {
               required
               className="form-select"
             >
-              <option value="lesson">Lesson</option>
-              <option value="achievement">Achievement</option>
+              <option value="Lesson">Lesson</option> {/* Capitalized */}
+              <option value="Achievement">Achievement</option>{" "}
+              {/* Capitalized */}
             </select>
           </div>
 

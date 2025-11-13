@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./Landing.css";
-
+import Footer from "../Footer/Footer";
 const Landing = () => {
   return (
     <main className="landing-container">
@@ -88,10 +88,7 @@ const Landing = () => {
           </p>
         </div>
       </div>
-
-      <footer className="landing-footer">
-        © All Rights Reserved - Evolve 2025
-      </footer>
+      <Footer />
     </main>
   );
 };

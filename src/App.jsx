@@ -61,8 +61,6 @@ const App = () => {
           <Route path="/" element={user ? <Dashboard /> : <Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/entries" element={<EntryList entries={entries} />} />
-          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
-          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
           <Route
             path="/achievements"
             element={<EntryListPage pageType="achievement" />}
@@ -71,7 +69,6 @@ const App = () => {
             path="/lessons"
             element={<EntryListPage pageType="lesson" />}
           />
-          <Route path="/entries/:entryId" element={<Dashboard />} />
         </Routes>
       </div>
 
@@ -81,8 +78,14 @@ const App = () => {
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        {!user && <Route path="/sign-in" element={<SignInForm />} />}
-        {!user && <Route path="/sign-up" element={<SignUpForm />} />}
+        <Route
+          path="/sign-in"
+          element={!user ? <SignInForm /> : <Dashboard />}
+        />
+        <Route
+          path="/sign-up"
+          element={!user ? <SignUpForm /> : <Dashboard />}
+        />
       </Routes>
     </>
   );

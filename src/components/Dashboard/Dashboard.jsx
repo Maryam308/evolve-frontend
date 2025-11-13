@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import * as entryService from "../../services/entryService";
 import "./Dashboard.css";
+import Footer from "../Footer/Footer";
 
 const Dashboard = () => {
   const { user } = useContext(UserContext);
@@ -18,13 +19,15 @@ const Dashboard = () => {
         const fetchedEntries = await entryService.index();
         setEntries(fetchedEntries);
 
-        // Calculate statistics
+        // Calculate statistics - FIXED: using correct capitalization
         const achievements = fetchedEntries.filter(
-          (entry) => entry.category === "achievement"
+          (entry) => entry.entryType === "Achievement"
         ).length;
+
         const lessons = fetchedEntries.filter(
-          (entry) => entry.category === "lesson"
+          (entry) => entry.entryType === "Lesson"
         ).length;
+
         const reflections = fetchedEntries.reduce(
           (total, entry) => total + (entry.reflections?.length || 0),
           0
@@ -59,17 +62,23 @@ const Dashboard = () => {
           <div className="stat-card">
             <div className="stat-icon teal">
               <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-trophy-icon lucide-trophy"
               >
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" />
+                <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" />
+                <path d="M18 9h1.5a1 1 0 0 0 0-5H18" />
                 <path d="M4 22h16" />
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" />
+                <path d="M6 9H4.5a1 1 0 0 1 0-5H6" />
               </svg>
             </div>
             <div className="stat-number">{stats.achievements}</div>
@@ -79,13 +88,19 @@ const Dashboard = () => {
           <div className="stat-card">
             <div className="stat-icon blue">
               <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-book-open-icon lucide-book-open"
               >
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <path d="M12 7v14" />
+                <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
               </svg>
             </div>
             <div className="stat-number">{stats.lessons}</div>
@@ -146,9 +161,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <footer className="dashboard-footer">
-        © All Rights Reserved - Evolve 2025
-      </footer>
+      <Footer />
     </main>
   );
 };
