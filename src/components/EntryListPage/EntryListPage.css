@@ -453,7 +453,7 @@
 
   .entries-grid {
     grid-template-columns: 1fr;
-    order: 2; /* Entries list second on mobile */
+    order: 2;
   }
 
   .entry-list-header {
@@ -516,5 +516,64 @@
   .pagination-button {
     padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
+  }
+}
+/* Sort Controls */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sort-label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.sort-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #374151;
+}
+
+.sort-select:hover {
+  border-color: #8b5cf6;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  color: #374151;
+}
+
+/* Style the options dropdown */
+.sort-select option {
+  color: #374151;
+  background: white;
+  padding: 8px;
+}
+
+/* Mobile responsive for sort controls */
+@media (max-width: 768px) {
+  .sort-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .sort-select {
+    width: 100%;
+    max-width: 200px;
+    color: #374151;
   }
 }
