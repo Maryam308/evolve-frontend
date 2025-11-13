@@ -1,0 +1,108 @@
+.delete-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.delete-popup-container {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  animation: popupSlideIn 0.2s ease-out;
+}
+
+@keyframes popupSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.delete-popup-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 1rem 0;
+}
+
+.delete-popup-message {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  font-size: 1rem;
+}
+
+.delete-popup-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.delete-popup-cancel-btn {
+  padding: 0.75rem 2rem;
+  border: 2px solid #d1d5db;
+  background: white;
+  color: #374151;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.delete-popup-cancel-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.delete-popup-confirm-btn {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+}
+
+.delete-popup-confirm-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+}
+
+@media (max-width: 480px) {
+  .delete-popup-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .delete-popup-actions {
+    flex-direction: column;
+  }
+
+  .delete-popup-cancel-btn,
+  .delete-popup-confirm-btn {
+    width: 100%;
+  }
+}

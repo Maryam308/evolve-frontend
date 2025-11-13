@@ -21,6 +21,8 @@ const create = async (entryFormData) => {
       },
       body: JSON.stringify(entryFormData),
     });
+
+    if (!res.ok) throw new Error("Failed to create entry");
     return res.json();
   } catch (error) {
     console.log(error);
@@ -37,6 +39,8 @@ const show = async (entryId) => {
     console.log(error);
   }
 };
+
+// Add the update function (the only thing you want from the branch)
 const update = async (entryId, entryFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -46,20 +50,6 @@ const update = async (entryId, entryFormData) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(entryFormData),
-    });
-    return res.json();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const deleteEntry = async (entryId) => {
-  try {
-    const res = await fetch(`${BASE_URL}/${entryId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
     });
     return res.json();
   } catch (error) {
@@ -83,4 +73,26 @@ const createReflection = async (entryId, reflectionFormData) => {
   }
 };
 
-export { index, create, show, update, deleteEntry, createReflection };
+// Use the better deleteEntry function from main branch
+const deleteEntry = async (entryId) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${entryId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete entry");
+
+    if (res.status === 204) return true;
+
+    const data = await res.json().catch(() => null);
+    return data;
+  } catch (error) {
+    console.log("Error deleting entry:", error);
+  }
+};
+
+export { index, create, show, update, createReflection, deleteEntry };
