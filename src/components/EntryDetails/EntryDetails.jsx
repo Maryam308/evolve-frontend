@@ -5,7 +5,7 @@ import * as entriesService from "../../services/entryService";
 import { UserContext } from "../../contexts/UserContext";
 import "./EntryDetails.css";
 
-const EntryDetails = () => {
+const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEntry }) => {
   const { entryId } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);

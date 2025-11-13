@@ -40,6 +40,23 @@ const show = async (entryId) => {
   }
 };
 
+
+const update = async (entryId, entryFormData) => {
+  try {
+    const res = await fetch(`${BASE_URL}/${entryId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(entryFormData),
+    });
+    return res.json();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const createReflection = async (entryId, reflectionFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}/reflections`, {
@@ -78,4 +95,4 @@ const deleteEntry = async (entryId) => {
   }
 };
 
-export { index, create, show, createReflection, deleteEntry };
+export { index, create, show, update, createReflection, deleteEntry };

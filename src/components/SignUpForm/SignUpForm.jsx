@@ -61,7 +61,7 @@ const SignUpForm = () => {
         <div className="modal-header">
           <div className="logo-container">
             <div className="logo-icon">
-              {/* Add your logo image here later */}
+            
             </div>
             <span className="logo-text">Evolve</span>
           </div>

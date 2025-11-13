@@ -16,11 +16,9 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-
   const location = useLocation();
 
   const [entries, setEntries] = useState([]);
-
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ const App = () => {
     };
 
     if (user) fetchAllEntries();
-  }, [user]);
+  }, [user, refreshTrigger]);
 
   const handleRefreshEntries = () => {
     setRefreshTrigger((prev) => prev + 1);
@@ -53,6 +51,19 @@ const App = () => {
       navigate("/dashboard");
     } catch (err) {
       console.error("Error deleting entry:", err);
+    }
+  };
+
+  // Add the update function from the branch
+  const handleUpdateEntry = async (formData, entryId) => {
+    try {
+      const updatedEntry = await entriesService.update(entryId, formData);
+      if (updatedEntry.err) {
+        throw new Error(updatedEntry.err);
+      }
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error("Error updating entry:", err);
     }
   };
 
@@ -81,6 +92,7 @@ const App = () => {
               <EntryDetails
                 handleDeleteEntry={handleDeleteEntry}
                 handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
               />
             }
           />
@@ -90,6 +102,7 @@ const App = () => {
               <EntryDetails
                 handleDeleteEntry={handleDeleteEntry}
                 handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
               />
             }
           />
@@ -101,11 +114,21 @@ const App = () => {
       <Routes>
         <Route
           path="/achievements/entries/:entryId"
-          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+          element={
+            <EntryDetails
+              handleDeleteEntry={handleDeleteEntry}
+              handleUpdateEntry={handleUpdateEntry}
+            />
+          }
         />
         <Route
           path="/lessons/entries/:entryId"
-          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+          element={
+            <EntryDetails
+              handleDeleteEntry={handleDeleteEntry}
+              handleUpdateEntry={handleUpdateEntry}
+            />
+          }
         />
 
         <Route
