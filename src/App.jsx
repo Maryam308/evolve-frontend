@@ -19,12 +19,6 @@ const App = () => {
   const location = useLocation();
   const [entries, setEntries] = useState([]);
 
-  // Check if we're on modal overlay pages
-  const isModalPage =
-    location.pathname.includes("/entries/") ||
-    location.pathname === "/sign-in" ||
-    location.pathname === "/sign-up";
-
   useEffect(() => {
     const fetchAllEntries = async () => {
       const entriesData = await entriesService.index();
@@ -43,7 +37,7 @@ const App = () => {
       await entriesService.deleteEntry(entryId);
       setEntries(entries.filter((entry) => entry._id !== entryId));
       console.log(`Entry ${entryId} deleted successfully`);
-      navigate(-1);
+      navigate("/dashboard");
     } catch (err) {
       console.error("Error deleting entry:", err);
     }
@@ -52,15 +46,13 @@ const App = () => {
   return (
     <>
       <NavBar />
-
-      {/* Main content area */}
-      <div
-        className={isModalPage ? "main-content-with-overlay" : "main-content"}
-      >
+      <div className="main-content">
         <Routes>
           <Route path="/" element={user ? <Dashboard /> : <Landing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/entries" element={<EntryList entries={entries} />} />
+          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
+          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
           <Route
             path="/achievements"
             element={<EntryListPage pageType="achievement" />}
@@ -69,23 +61,36 @@ const App = () => {
             path="/lessons"
             element={<EntryListPage pageType="lesson" />}
           />
+          {/* Fallback routes for when entry details are accessed directly */}
+          <Route
+            path="/achievements/entries/:entryId"
+            element={<EntryListPage pageType="achievement" />}
+          />
+          <Route
+            path="/lessons/entries/:entryId"
+            element={<EntryListPage pageType="lesson" />}
+          />
+          <Route path="/entries/:entryId" element={<Dashboard />} />
         </Routes>
       </div>
 
       {/* Modal overlays */}
       <Routes>
+        {/* Add the missing routes for context-specific entry details */}
+        <Route
+          path="/achievements/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
+        <Route
+          path="/lessons/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
         <Route
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        <Route
-          path="/sign-in"
-          element={!user ? <SignInForm /> : <Dashboard />}
-        />
-        <Route
-          path="/sign-up"
-          element={!user ? <SignUpForm /> : <Dashboard />}
-        />
+        {!user && <Route path="/sign-in" element={<SignInForm />} />}
+        {!user && <Route path="/sign-up" element={<SignUpForm />} />}
       </Routes>
     </>
   );

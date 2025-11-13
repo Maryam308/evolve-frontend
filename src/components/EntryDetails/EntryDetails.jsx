@@ -38,7 +38,15 @@ const EntryDetails = (props) => {
   };
 
   const handleClose = () => {
-    navigate(-1);
+    // Determine which page to navigate back to based on the current URL
+    const currentPath = window.location.pathname;
+    if (currentPath.includes("/achievements/")) {
+      navigate("/achievements");
+    } else if (currentPath.includes("/lessons/")) {
+      navigate("/lessons");
+    } else {
+      navigate(-1); // Fallback to previous page
+    }
   };
 
   const handleDelete = async () => {
@@ -47,9 +55,19 @@ const EntryDetails = (props) => {
     );
     if (confirmed) {
       await props.handleDeleteEntry(entryId);
+      // Navigate back to the correct list page after deletion
+      const currentPath = window.location.pathname;
+      if (currentPath.includes("/achievements/")) {
+        navigate("/achievements");
+      } else if (currentPath.includes("/lessons/")) {
+        navigate("/lessons");
+      } else {
+        navigate(-1);
+      }
     }
   };
 
+  // Show loading state if entry is null - MOVE THIS CHECK TO THE TOP
   if (!entry) {
     return (
       <div className="details-overlay">
@@ -61,9 +79,45 @@ const EntryDetails = (props) => {
     );
   }
 
-  // Determine icon and colors based on entry type
+  // Determine icon and colors based on entry type - NOW entry is guaranteed to not be null
   const isAchievement = entry.entryType === "achievement";
-  const icon = isAchievement ? "🏆" : "📖";
+  const icon = isAchievement ? (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-trophy-icon lucide-trophy"
+    >
+      <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" />
+      <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" />
+      <path d="M18 9h1.5a1 1 0 0 0 0-5H18" />
+      <path d="M4 22h16" />
+      <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" />
+      <path d="M6 9H4.5a1 1 0 0 1 0-5H6" />
+    </svg>
+  ) : (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-book-open-icon lucide-book-open"
+    >
+      <path d="M12 7v14" />
+      <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+    </svg>
+  );
 
   // Map entry fields to display sections
   const sections = [];
