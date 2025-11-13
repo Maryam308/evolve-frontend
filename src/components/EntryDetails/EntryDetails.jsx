@@ -1,15 +1,17 @@
+import DeletePopup from "../DeletePopup/DeletePopup";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import * as entriesService from "../../services/entryService";
 import { UserContext } from "../../contexts/UserContext";
 import "./EntryDetails.css";
 
-const EntryDetails = (props) => {
+const EntryDetails = () => {
   const { entryId } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
   const [entry, setEntry] = useState(null);
   const [reflectionText, setReflectionText] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const fetchEntry = async () => {
@@ -38,7 +40,7 @@ const EntryDetails = (props) => {
   };
 
   const handleClose = () => {
-    // Determine which page to navigate back to based on the current URL
+   
     const currentPath = window.location.pathname;
     if (currentPath.includes("/achievements/")) {
       navigate("/achievements");
@@ -49,12 +51,12 @@ const EntryDetails = (props) => {
     }
   };
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this entry?"
-    );
-    if (confirmed) {
-      await props.handleDeleteEntry(entryId);
+ 
+  const handleDeleteClick = () => setShowPopup(true);
+
+  const handleConfirmDelete = async () => {
+    try {
+      await entriesService.deleteEntry(entryId);
       // Navigate back to the correct list page after deletion
       const currentPath = window.location.pathname;
       if (currentPath.includes("/achievements/")) {
@@ -64,10 +66,16 @@ const EntryDetails = (props) => {
       } else {
         navigate(-1);
       }
+    } catch (err) {
+      console.error("Error deleting entry:", err);
+    } finally {
+      setShowPopup(false);
     }
   };
 
-  // Show loading state if entry is null - MOVE THIS CHECK TO THE TOP
+  const handleCancelDelete = () => setShowPopup(false);
+
+ 
   if (!entry) {
     return (
       <div className="details-overlay">
@@ -79,7 +87,7 @@ const EntryDetails = (props) => {
     );
   }
 
-  // Determine icon and colors based on entry type - NOW entry is guaranteed to not be null
+  // Determine icon and colors based on entry type
   const isAchievement = entry.entryType === "achievement";
   const icon = isAchievement ? (
     <svg
@@ -161,7 +169,7 @@ const EntryDetails = (props) => {
         <div className="details-actions">
           {user && entry.author && entry.author._id === user._id && (
             <button
-              onClick={handleDelete}
+              onClick={handleDeleteClick} 
               className="details-delete-btn"
               title="Delete entry"
             >
@@ -350,6 +358,14 @@ const EntryDetails = (props) => {
           </div>
         </div>
       </div>
+
+      {/* Delete Popup Modal */}
+      {showPopup && (
+        <DeletePopup
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
     </div>
   );
 };
