@@ -1,22 +1,19 @@
+import "./DeletePopup.css";
+
 function DeletePopup({ onConfirm, onCancel }) {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-80 text-center">
-        <h2 className="text-lg font-semibold mb-3">Delete Entry?</h2>
-        <p className="text-gray-600 mb-6">
-          Are you sure you want to delete this entry? This action cannot be undone.
+    <div className="delete-popup-overlay">
+      <div className="delete-popup-container">
+        <h2 className="delete-popup-title">Delete Entry?</h2>
+        <p className="delete-popup-message">
+          Are you sure you want to delete this entry? This action cannot be
+          undone.
         </p>
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100"
-          >
+        <div className="delete-popup-actions">
+          <button onClick={onCancel} className="delete-popup-cancel-btn">
             No
           </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600"
-          >
+          <button onClick={onConfirm} className="delete-popup-confirm-btn">
             Yes
           </button>
         </div>

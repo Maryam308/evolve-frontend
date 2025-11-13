@@ -21,6 +21,8 @@ const App = () => {
 
   const [entries, setEntries] = useState([]);
 
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
   useEffect(() => {
     const fetchAllEntries = async () => {
       try {
@@ -34,6 +36,9 @@ const App = () => {
     if (user) fetchAllEntries();
   }, [user]);
 
+  const handleRefreshEntries = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   const handleDeleteEntry = async (entryId) => {
     const confirmDelete = window.confirm(
@@ -46,7 +51,6 @@ const App = () => {
       setEntries(entries.filter((entry) => entry._id !== entryId));
       console.log(`Entry ${entryId} deleted successfully`);
       navigate("/dashboard");
-
     } catch (err) {
       console.error("Error deleting entry:", err);
     }
@@ -73,11 +77,21 @@ const App = () => {
 
           <Route
             path="/achievements/entries/:entryId"
-            element={<EntryListPage pageType="achievement" />}
+            element={
+              <EntryDetails
+                handleDeleteEntry={handleDeleteEntry}
+                handleRefreshEntries={handleRefreshEntries}
+              />
+            }
           />
           <Route
             path="/lessons/entries/:entryId"
-            element={<EntryListPage pageType="lesson" />}
+            element={
+              <EntryDetails
+                handleDeleteEntry={handleDeleteEntry}
+                handleRefreshEntries={handleRefreshEntries}
+              />
+            }
           />
           <Route path="/entries/:entryId" element={<Dashboard />} />
         </Routes>
@@ -85,7 +99,6 @@ const App = () => {
 
       {/* Modal overlays */}
       <Routes>
-
         <Route
           path="/achievements/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
@@ -97,18 +110,12 @@ const App = () => {
 
         <Route
           path="/entries"
-          element={
-            <EntryList
-              entries={entries}
-              onDelete={handleDeleteEntry}
-            />
-          }
+          element={<EntryList entries={entries} onDelete={handleDeleteEntry} />}
         />
 
         {!user && <Route path="/sign-in" element={<SignInForm />} />}
         {!user && <Route path="/sign-up" element={<SignUpForm />} />}
       </Routes>
-
     </>
   );
 };

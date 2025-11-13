@@ -40,31 +40,40 @@ const EntryDetails = () => {
   };
 
   const handleClose = () => {
-   
     const currentPath = window.location.pathname;
     if (currentPath.includes("/achievements/")) {
       navigate("/achievements");
     } else if (currentPath.includes("/lessons/")) {
       navigate("/lessons");
     } else {
-      navigate(-1); // Fallback to previous page
+      navigate(-1);
     }
   };
 
- 
   const handleDeleteClick = () => setShowPopup(true);
 
   const handleConfirmDelete = async () => {
     try {
       await entriesService.deleteEntry(entryId);
-      // Navigate back to the correct list page after deletion
-      const currentPath = window.location.pathname;
-      if (currentPath.includes("/achievements/")) {
-        navigate("/achievements");
-      } else if (currentPath.includes("/lessons/")) {
-        navigate("/lessons");
+
+      // Navigate based on the entry type
+      if (entry && entry.entryType) {
+        if (entry.entryType.toLowerCase() === "achievement") {
+          navigate("/achievements");
+        } else if (entry.entryType.toLowerCase() === "lesson") {
+          navigate("/lessons");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        navigate(-1);
+        const currentPath = window.location.pathname;
+        if (currentPath.includes("/achievements/")) {
+          navigate("/achievements");
+        } else if (currentPath.includes("/lessons/")) {
+          navigate("/lessons");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (err) {
       console.error("Error deleting entry:", err);
@@ -75,7 +84,6 @@ const EntryDetails = () => {
 
   const handleCancelDelete = () => setShowPopup(false);
 
- 
   if (!entry) {
     return (
       <div className="details-overlay">
@@ -169,7 +177,7 @@ const EntryDetails = () => {
         <div className="details-actions">
           {user && entry.author && entry.author._id === user._id && (
             <button
-              onClick={handleDeleteClick} 
+              onClick={handleDeleteClick}
               className="details-delete-btn"
               title="Delete entry"
             >
