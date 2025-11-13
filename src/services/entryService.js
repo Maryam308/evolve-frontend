@@ -40,7 +40,7 @@ const show = async (entryId) => {
   }
 };
 
-// Add the update function (the only thing you want from the branch)
+
 const update = async (entryId, entryFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -73,7 +73,7 @@ const createReflection = async (entryId, reflectionFormData) => {
   }
 };
 
-// Use the better deleteEntry function from main branch
+
 const deleteEntry = async (entryId) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {

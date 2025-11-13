@@ -52,22 +52,6 @@ const SignUpForm = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <main>
-      <h1>Sign Up</h1>
-      <p>{message}</p>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor='username'>Username:</label>
-          <input
-            type='text'
-            id='username'
-            value={username}
-            name='username'
-            onChange={handleChange}
-            required
-          />
-=======
     <div className="modal-overlay" onClick={handleClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close" onClick={handleClose}>
@@ -77,13 +61,12 @@ const SignUpForm = () => {
         <div className="modal-header">
           <div className="logo-container">
             <div className="logo-icon">
-              {/* Add your logo image here later */}
+            
             </div>
             <span className="logo-text">Evolve</span>
           </div>
 
           <h2 className="modal-title">Welcome to Evolve!</h2>
->>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">

@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-import { Link } from "react-router";
-
-const EntryList = (props) => {
-  return (
-    <main>
-      {props.entries.map((entry) => (
-        <article key={entry._id}>
-          <Link to={`/entries/${entry._id}`}>
-            <header>
-              <h2>{entry.title}</h2>
-            </header>
-          </Link>
-        </article>
-=======
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import DeletePopup from "../DeletePopup/DeletePopup";
@@ -51,7 +36,6 @@ const EntryList = ({ entries, onDelete }) => {
             Delete
           </button>
         </div>
->>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
       ))}
 
       {showDelete && selectedEntry && (
