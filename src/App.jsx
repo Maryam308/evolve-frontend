@@ -19,17 +19,23 @@ const App = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const [entries, setEntries] = useState([]);
-  useEffect(() => {
-    const fetchAllEntries = async () => {
-      const entriesData = await entriesService.index();
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
+  const fetchAllEntries = async () => {
+    const entriesData = await entriesService.index();
+    setEntries(entriesData);
+  };
 
-      setEntries(entriesData);
-    };
+  useEffect(() => {
     if (user) fetchAllEntries();
   }, [user]);
 
   const handleFormView = () => {
     setIsFormOpen(!isFormOpen);
+    if (isFormOpen) {
+      setSelectedEntry(null);
+    }
   };
 
   const handleAddEntry = async (formData) => {
@@ -39,6 +45,23 @@ const App = () => {
         throw new Error(newEntry.err);
       }
       setIsFormOpen(false);
+      setSelectedEntry(null);
+      await fetchAllEntries();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleUpdateEntry = async (formData, entryId) => {
+    try {
+      const updatedEntry = await entriesService.update(entryId, formData);
+      if (updatedEntry.err) {
+        throw new Error(updatedEntry.err);
+      }
+      setIsFormOpen(false);
+      setSelectedEntry(null);
+      await fetchAllEntries();
+      setRefreshTrigger(prev => prev + 1);
     } catch (err) {
       console.log(err);
     }
@@ -52,8 +75,30 @@ const App = () => {
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
 
-        <Route path="/entries" element={<EntryList entries={entries} />} />
-        <Route path="/entries/:entryId" element={<EntryDetails />} />
+        <Route 
+          path="/entries" 
+          element={
+            <EntryList 
+              entries={entries} 
+              onEditEntry={(entry) => {
+                setSelectedEntry(entry);
+                setIsFormOpen(true);
+              }}
+            /> 
+          } 
+        />
+        <Route 
+          path="/entries/:entryId" 
+          element={
+            <EntryDetails 
+              key={refreshTrigger}
+              onEditEntry={(entry) => {
+                setSelectedEntry(entry);
+                setIsFormOpen(true);
+              }}
+            /> 
+          } 
+        />
       </Routes>
 
       {user && (
@@ -61,7 +106,13 @@ const App = () => {
           <button onClick={handleFormView}>
             {isFormOpen ? "Close Form" : "Create New Entry"}
           </button>
-          {isFormOpen && <EntryForm handleAddEntry={handleAddEntry} />}
+          {isFormOpen && (
+            <EntryForm 
+              handleAddEntry={handleAddEntry}
+              handleUpdateEntry={handleUpdateEntry}
+              selected={selectedEntry}
+            />
+          )}
         </div>
       )}
     </>
@@ -69,4 +120,4 @@ const App = () => {
 };
 
 export default App;
-
+ 

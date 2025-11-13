@@ -13,7 +13,12 @@ const getUserFromToken = () => {
 function UserProvider({ children }) {
   const [user, setUser] = useState(getUserFromToken());
 
-  const value = { user, setUser };
+  const handleSignout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  const value = { user, setUser, handleSignout };
 
   return (
     <UserContext.Provider value={value}>

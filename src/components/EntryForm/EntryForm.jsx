@@ -23,9 +23,9 @@ const EntryForm = (props) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    if (props.selected && props.selected._id) {
+    if (props.selected && props.selected._id && props.handleUpdateEntry) {
       props.handleUpdateEntry(formData, props.selected._id);
-    } else {
+    } else if (props.handleAddEntry) {
       props.handleAddEntry(formData);
     }
   };
@@ -36,7 +36,7 @@ const EntryForm = (props) => {
 
   return (
     <div>
-      <h1>Create New Entry</h1>
+      <h1>{props.selected ? "Edit Entry" : "Create New Entry"}</h1>
 
       <form onSubmit={handleSubmit}>
         {/* Entry Type */}

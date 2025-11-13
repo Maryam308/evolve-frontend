@@ -1,28 +1,54 @@
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useState, useEffect, useContext } from 'react';
 import * as entryService from "../../services/entryService";
 import { UserContext } from '../../contexts/UserContext';
 
 const EntryDetails = () => {
   const { entryId } = useParams();
-   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [entry, setEntry] = useState(null);
 
   useEffect(() => {
     const fetchEntry = async () => {
-      const entryData = await entryService.show(entryId);
-      setEntry(entryData);
-      
+      try {
+        const entryData = await entryService.show(entryId);
+        setEntry(entryData);
+      } catch (err) {
+        console.error('Error fetching entry:', err);
+      }
     };
     fetchEntry();
   }, [entryId]);
 
   const handleAddReflection = async (reflectionFormData) => {
-    const newReflection = await entryService.createReflection(
-      entryId,
-      reflectionFormData
-    );
-    setEntry(newReflection);
+    try {
+      const updatedEntry = await entryService.createReflection(
+        entryId,
+        reflectionFormData
+      );
+      setEntry(updatedEntry);
+    } catch (err) {
+      console.error('Error adding reflection:', err);
+    }
+  };
+
+  const handleDeleteEntry = async () => {
+    try {
+      const result = await entryService.deleteEntry(entryId);
+      if (result.err) {
+        throw new Error(result.err);
+      }
+      navigate('/entries');
+    } catch (err) {
+      console.error('Error deleting entry:', err);
+    }
+  };
+
+  const handleEditEntry = () => {
+    if (props.onEditEntry) {
+      props.onEditEntry(entry);
+    }
   };
 
   if (!entry) return <main>Loading...</main>;
@@ -32,17 +58,20 @@ const EntryDetails = () => {
       <header>
         <h1>{entry.title}</h1>
         <p>{entry.description}</p>
-        <p>
-          {entry.author.username} posted on{" "}
-          {new Date(entry.createdAt).toLocaleDateString()}
-        </p>
+        {entry.author && (
+          <p>
+            {entry.author.username} posted on{" "}
+            {new Date(entry.createdAt).toLocaleDateString()}
+          </p>
+        )}
         <p>Type: {entry.entryType}</p>
         <p>Category: {entry.entryCategory}</p>
-        {entry.author._id === user._id && (
-              <>
-                <button>Delete</button>
-              </>
-            )}
+        {entry.author && entry.author._id === user._id && (
+          <>
+            <button onClick={handleEditEntry}>Edit</button>
+            <button onClick={handleDeleteEntry}>Delete</button>
+          </>
+        )}
       </header>
 
       <section>
@@ -82,13 +111,17 @@ const EntryDetails = () => {
 
         <ReflectionForm handleAddReflection={handleAddReflection} />
 
-        {!entry.reflections.length && <p>There are no reflections.</p>}
+        {(!entry.reflections || entry.reflections.length === 0) && (
+          <p>There are no reflections.</p>
+        )}
 
-        {entry.reflections.map((reflection) => (
-          <article key={reflection._id}>
-            <p>{reflection.reflectionText}</p>
-          </article>
-        ))}
+        {entry.reflections && entry.reflections.length > 0 && (
+          entry.reflections.map((reflection) => (
+            <article key={reflection._id}>
+              <p>{reflection.reflectionText}</p>
+            </article>
+          ))
+        )}
       </section>
     </main>
   );

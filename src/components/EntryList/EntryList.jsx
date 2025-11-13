@@ -1,16 +1,16 @@
 import { Link } from "react-router";
+
 const EntryList = (props) => {
   return (
     <main>
       {props.entries.map((entry) => (
-        <Link key={entry._id} to={`/entries/${entry._id}`}>
-          <article>
+        <article key={entry._id}>
+          <Link to={`/entries/${entry._id}`}>
             <header>
               <h2>{entry.title}</h2>
             </header>
-       
-          </article>
-        </Link>
+          </Link>
+        </article>
       ))}
     </main>
   );

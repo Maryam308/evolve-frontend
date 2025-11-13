@@ -6,13 +6,7 @@ import "./NavBar.css";
 const NavBar = () => {
   const { user, handleSignout } = useContext(UserContext);
 
-  const handleSignOut = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-  };
-
   return (
-
     <nav className="navbar">
       <Link to="/" className="logo">
         <div className="logo-icon">⚡</div>
@@ -22,14 +16,13 @@ const NavBar = () => {
       <div className="nav-buttons">
         {user ? (
           <div>
-          <button onClick={handleSignOut} className="nav-button-secondary">
-            Sign Out
-          </button>
             <Link to="/entries" className="nav-button-secondary">
               Entries
             </Link>
+            <button onClick={handleSignout} className="nav-button-secondary">
+              Sign Out
+            </button>
           </div>
-
         ) : (
           <>
             <Link to="/sign-in" className="nav-button-secondary">
@@ -41,7 +34,6 @@ const NavBar = () => {
           </>
         )}
       </div>
-
     </nav>
   );
 };
