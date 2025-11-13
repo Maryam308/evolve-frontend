@@ -1,19 +1,19 @@
-# React JWT Auth Template
+# Evolve
 
-## About
+Evolve is a personal growth journaling app designed to help users document their achievements, learn from challenges, and reflect on their journey over time. Track your wins, lessons, and reflections in a private and supportive space.
 
-This repo is a React JWT Auth template meant to be paired with a back-end app utilizing JWT tokens.
+---
 
-## Getting started
+## 🌟 Core Features
 
-Fork and clone this repository to your local machine.
+- User Authentication: Sign Up and Sign In securely
+- Create, Read, Update, Delete (CRUD) entries for Achievements and Lessons
+- Categorize entries by Career, Relationships, Hobbies, and Personal
+- Pagination and Sorting of entries for easy navigation and organization
+- Responsive UI built with React and styled with a consistent purple-themed design
+- Detailed entry views with sections for description, how you got there, and what worked well
+- Add reflections to each entry to deepen learning and growth
+- Intuitive navigation between Home, Achievements, and Lessons sections
 
-After moving into the cloned directory, run `npm i` to download the dependencies.
+---
 
-Create a `.env` file in the root of the project and add the following:
-
-```plaintext
-VITE_BACK_END_SERVER_URL=http://localhost:3000
-```
-
-Start the app with `npm run dev`.
