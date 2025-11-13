@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -16,6 +16,7 @@ import * as entriesService from "./services/entryService";
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [entries, setEntries] = useState([]);
 
   useEffect(() => {
@@ -45,23 +46,51 @@ const App = () => {
   return (
     <>
       <NavBar />
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/entries" element={<EntryList entries={entries} />} />
+          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
+          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
+          <Route
+            path="/achievements"
+            element={<EntryListPage pageType="achievement" />}
+          />
+          <Route
+            path="/lessons"
+            element={<EntryListPage pageType="lesson" />}
+          />
+          {/* Fallback routes for when entry details are accessed directly */}
+          <Route
+            path="/achievements/entries/:entryId"
+            element={<EntryListPage pageType="achievement" />}
+          />
+          <Route
+            path="/lessons/entries/:entryId"
+            element={<EntryListPage pageType="lesson" />}
+          />
+          <Route path="/entries/:entryId" element={<Dashboard />} />
+        </Routes>
+      </div>
 
+      {/* Modal overlays */}
       <Routes>
-        <Route path="/" element={user ? <Dashboard /> : <Landing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/sign-up" element={<SignUpForm />} />
-        <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/entries" element={<EntryList entries={entries} />} />
+        {/* Add the missing routes for context-specific entry details */}
+        <Route
+          path="/achievements/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
+        <Route
+          path="/lessons/entries/:entryId"
+          element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
+        />
         <Route
           path="/entries/:entryId"
           element={<EntryDetails handleDeleteEntry={handleDeleteEntry} />}
         />
-        {/* Entry list pages with form popups */}
-        <Route
-          path="/achievements"
-          element={<EntryListPage pageType="achievement" />}
-        />
-        <Route path="/lessons" element={<EntryListPage pageType="lesson" />} />
+        {!user && <Route path="/sign-in" element={<SignInForm />} />}
+        {!user && <Route path="/sign-up" element={<SignUpForm />} />}
       </Routes>
     </>
   );
