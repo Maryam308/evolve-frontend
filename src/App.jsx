@@ -20,24 +20,47 @@ const App = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [entries, setEntries] = useState([]);
 
+
   useEffect(() => {
     const fetchAllEntries = async () => {
-      const entriesData = await entriesService.index();
-      setEntries(entriesData);
+      try {
+        const entriesData = await entriesService.index();
+        setEntries(entriesData);
+      } catch (err) {
+        console.error("Error fetching entries:", err);
+      }
     };
+
     if (user) fetchAllEntries();
   }, [user]);
 
   const handleFormView = () => setIsFormOpen(!isFormOpen);
 
+
   const handleAddEntry = async (formData) => {
     try {
       const newEntry = await entriesService.create(formData);
       if (newEntry.err) throw new Error(newEntry.err);
+
       setIsFormOpen(false);
-      setEntries((prev) => [...prev, newEntry]);
+
+      if (Array.isArray(newEntry)) {
+        setEntries(newEntry); 
+      } else {
+        setEntries((prev) => [...prev, newEntry]); 
+      }
     } catch (err) {
-      console.log(err);
+      console.error("Error adding entry:", err);
+    }
+  };
+
+  
+  const handleDeleteEntry = async (entryId) => {
+    try {
+      await entriesService.deleteEntry(entryId); 
+      setEntries(entries.filter((entry) => entry._id !== entryId)); 
+    } catch (err) {
+      console.error("Error deleting entry:", err);
     }
   };
 
@@ -49,7 +72,16 @@ const App = () => {
         <Route path="/" element={user ? <Dashboard /> : <Landing />} />
         <Route path="/sign-up" element={<SignUpForm />} />
         <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/entries" element={<EntryList entries={entries} />} />
+        
+        <Route
+          path="/entries"
+          element={
+            <EntryList
+              entries={entries}
+              onDelete={handleDeleteEntry}
+            />
+          }
+        />
         <Route path="/entries/:entryId" element={<EntryDetails />} />
       </Routes>
 
@@ -61,6 +93,7 @@ const App = () => {
           >
             {isFormOpen ? "Close Form" : "Create New Entry"}
           </button>
+
           {isFormOpen && <EntryForm handleAddEntry={handleAddEntry} />}
         </div>
       )}

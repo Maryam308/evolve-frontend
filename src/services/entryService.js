@@ -21,6 +21,8 @@ const create = async (entryFormData) => {
       },
       body: JSON.stringify(entryFormData),
     });
+
+    if (!res.ok) throw new Error("Failed to create entry");
     return res.json();
   } catch (error) {
     console.log(error);
@@ -54,6 +56,7 @@ const createReflection = async (entryId, reflectionFormData) => {
   }
 };
 
+
 const deleteEntry = async (entryId) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -63,10 +66,15 @@ const deleteEntry = async (entryId) => {
         "Content-Type": "application/json",
       },
     });
+
     if (!res.ok) throw new Error("Failed to delete entry");
-    return res.json();
+
+    if (res.status === 204) return true;
+
+    const data = await res.json().catch(() => null);
+    return data;
   } catch (error) {
-    console.log(error);
+    console.log("Error deleting entry:", error);
   }
 };
 
