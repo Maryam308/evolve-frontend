@@ -6,9 +6,7 @@ const index = async () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const create = async (entryFormData) => {
@@ -24,9 +22,7 @@ const create = async (entryFormData) => {
 
     if (!res.ok) throw new Error("Failed to create entry");
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const show = async (entryId) => {
@@ -35,11 +31,8 @@ const show = async (entryId) => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
-
 
 const update = async (entryId, entryFormData) => {
   try {
@@ -52,9 +45,7 @@ const update = async (entryId, entryFormData) => {
       body: JSON.stringify(entryFormData),
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const createReflection = async (entryId, reflectionFormData) => {
@@ -68,9 +59,7 @@ const createReflection = async (entryId, reflectionFormData) => {
       body: JSON.stringify(reflectionFormData),
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const deleteEntry = async (entryId) => {
@@ -89,9 +78,7 @@ const deleteEntry = async (entryId) => {
 
     const data = await res.json().catch(() => null);
     return data;
-  } catch (error) {
-    console.log("Error deleting entry:", error);
-  }
+  } catch (error) {}
 };
 
 export { index, create, show, update, createReflection, deleteEntry };
