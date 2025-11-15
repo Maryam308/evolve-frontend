@@ -43,8 +43,6 @@ const EntryForm = (props) => {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    console.log("Form data being submitted:", formData); // Debug log
-
     if (props.selected && props.selected._id && props.handleUpdateEntry) {
       props.handleUpdateEntry(formData, props.selected._id);
     } else if (props.handleAddEntry) {

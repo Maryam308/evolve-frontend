@@ -24,11 +24,9 @@ const EntryDetails = ({
       }
       try {
         const entryData = await entriesService.show(entryId);
-        console.log("Fetched entry data:", entryData); // Debug log
+
         setEntry(entryData);
-      } catch (error) {
-        console.error("Error fetching entry:", error);
-      }
+      } catch (error) {}
     };
     fetchEntry();
   }, [entryId]);
@@ -44,9 +42,7 @@ const EntryDetails = ({
 
       setEntry(newReflection);
       setReflectionText("");
-    } catch (error) {
-      console.error("Error adding reflection:", error);
-    }
+    } catch (error) {}
   };
 
   const handleClose = () => {
@@ -86,7 +82,6 @@ const EntryDetails = ({
         }
       }
     } catch (err) {
-      console.error("Error deleting entry:", err);
     } finally {
       setShowPopup(false);
     }
