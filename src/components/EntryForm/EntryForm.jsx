@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./EntryForm.css";
 
@@ -16,9 +16,25 @@ const EntryForm = (props) => {
     improvementPlan: "",
   };
 
-  const [formData, setFormData] = useState(
-    props.selected ? props.selected : initialState
-  );
+  const [formData, setFormData] = useState(initialState);
+
+  // Update form data when selected entry changes
+  useEffect(() => {
+    if (props.selected) {
+      setFormData({
+        title: props.selected.title || "",
+        description: props.selected.description || "",
+        entryType: props.selected.entryType || props.defaultType || "Lesson",
+        entryCategory: props.selected.entryCategory || "Career",
+        initialSituation: props.selected.initialSituation || "",
+        actionsImplemented: props.selected.actionsImplemented || "",
+        keyOutcomes: props.selected.keyOutcomes || "",
+        improvementPlan: props.selected.improvementPlan || "",
+      });
+    } else {
+      setFormData(initialState);
+    }
+  }, [props.selected, props.defaultType]);
 
   const handleChange = (evt) => {
     setFormData({ ...formData, [evt.target.name]: evt.target.value });
@@ -26,6 +42,8 @@ const EntryForm = (props) => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
+
+    console.log("Form data being submitted:", formData); // Debug log
 
     if (props.selected && props.selected._id && props.handleUpdateEntry) {
       props.handleUpdateEntry(formData, props.selected._id);
@@ -133,7 +151,7 @@ const EntryForm = (props) => {
           {/* Conditional Fields for Achievement */}
           {isAchievement && (
             <>
-              {/* How I Got There */}
+              {/* How I Got There - stored in initialSituation */}
               <div className="form-group">
                 <label htmlFor="initialSituation">How I Got There</label>
                 <textarea
@@ -147,7 +165,7 @@ const EntryForm = (props) => {
                 />
               </div>
 
-              {/* What Worked Well */}
+              {/* What Worked Well - stored in actionsImplemented */}
               <div className="form-group">
                 <label htmlFor="actionsImplemented">What Worked Well</label>
                 <textarea
@@ -166,7 +184,7 @@ const EntryForm = (props) => {
           {/* Conditional Fields for Lesson */}
           {isLesson && (
             <>
-              {/* How I Felt */}
+              {/* How I Felt - stored in keyOutcomes */}
               <div className="form-group">
                 <label htmlFor="keyOutcomes">How I Felt</label>
                 <textarea
@@ -180,7 +198,7 @@ const EntryForm = (props) => {
                 />
               </div>
 
-              {/* What I'd Do Differently */}
+              {/* What I'd Do Differently - stored in improvementPlan */}
               <div className="form-group">
                 <label htmlFor="improvementPlan">What I'd Do Differently</label>
                 <textarea
