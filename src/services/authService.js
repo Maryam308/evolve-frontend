@@ -12,7 +12,6 @@ const handleResponse = async (res) => {
   try {
     return JSON.parse(text);
   } catch (parseError) {
-    console.error("Failed to parse JSON:", text);
     throw new Error("Invalid JSON response from server");
   }
 };
@@ -43,7 +42,6 @@ const signUp = async (formData) => {
 
     throw new Error("Invalid response from server");
   } catch (err) {
-    console.error("Sign up error:", err);
     throw new Error(err.message || "Sign up failed");
   }
 };
@@ -74,7 +72,6 @@ const signIn = async (formData) => {
 
     throw new Error("Invalid response from server");
   } catch (err) {
-    console.error("Sign in error:", err);
     throw new Error(err.message || "Sign in failed");
   }
 };

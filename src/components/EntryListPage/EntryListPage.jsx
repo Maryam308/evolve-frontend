@@ -15,7 +15,7 @@ const EntryListPage = ({ pageType }) => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage] = useState(6); // Show 6 entries per page
+  const [entriesPerPage] = useState(6);
 
   // Sort state
   const [sortOrder, setSortOrder] = useState("newest");
@@ -140,19 +140,17 @@ const EntryListPage = ({ pageType }) => {
   const fetchEntries = async () => {
     try {
       const fetchedEntries = await entryService.index();
-      // Filter by page type (achievement or lesson)
       const typeFiltered = fetchedEntries.filter(
         (entry) => entry.entryType?.toLowerCase() === pageType
       );
       setEntries(typeFiltered);
       setFilteredEntries(typeFiltered);
-      setCurrentPage(1); // Reset to first page when entries change
+      setCurrentPage(1);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Sort entries by date
   const sortEntriesByDate = (entriesToSort, order) => {
     return [...entriesToSort].sort((a, b) => {
       const dateA = new Date(a.createdAt);
@@ -164,20 +162,17 @@ const EntryListPage = ({ pageType }) => {
   useEffect(() => {
     let filtered = entries;
 
-    // Apply category filter
     if (selectedCategory !== "all") {
       filtered = entries.filter(
         (entry) => entry.entryCategory?.toLowerCase() === selectedCategory
       );
     }
 
-    // Apply sorting
     const sorted = sortEntriesByDate(filtered, sortOrder);
     setFilteredEntries(sorted);
-    setCurrentPage(1); // Reset to first page when category or sort changes
+    setCurrentPage(1);
   }, [selectedCategory, entries, sortOrder]);
 
-  // Pagination logic
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = filteredEntries.slice(
@@ -186,10 +181,8 @@ const EntryListPage = ({ pageType }) => {
   );
   const totalPages = Math.ceil(filteredEntries.length / entriesPerPage);
 
-  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Handle sort change
   const handleSortChange = (newSortOrder) => {
     setSortOrder(newSortOrder);
   };
@@ -199,13 +192,13 @@ const EntryListPage = ({ pageType }) => {
   };
 
   const handleNewEntry = () => {
-    setEditingEntry(null); // Clear any editing entry
+    setEditingEntry(null);
     setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
-    setEditingEntry(null); // Clear editing entry when closing
+    setEditingEntry(null);
   };
 
   const handleAddEntry = async (formData) => {
@@ -213,7 +206,7 @@ const EntryListPage = ({ pageType }) => {
       const newEntry = await entryService.create(formData);
       if (newEntry.err) throw new Error(newEntry.err);
       setIsFormOpen(false);
-      fetchEntries(); // Refresh entries after adding
+      fetchEntries();
     } catch (err) {
       console.log(err);
     }
@@ -221,10 +214,24 @@ const EntryListPage = ({ pageType }) => {
 
   const handleEditEntry = async (entryId) => {
     try {
-      // Fetch the full entry details
       const entry = await entryService.show(entryId);
-      setEditingEntry(entry); // Set the entry to be edited
-      setIsFormOpen(true); // Open the form
+
+      const completeEntry = {
+        ...entry,
+        title: entry.title || "",
+        description: entry.description || "",
+        entryType:
+          entry.entryType ||
+          (pageType === "achievement" ? "Achievement" : "Lesson"),
+        entryCategory: entry.entryCategory || "Career",
+        initialSituation: entry.initialSituation || "",
+        actionsImplemented: entry.actionsImplemented || "",
+        keyOutcomes: entry.keyOutcomes || "",
+        improvementPlan: entry.improvementPlan || "",
+      };
+
+      setEditingEntry(completeEntry);
+      setIsFormOpen(true);
     } catch (err) {
       console.log("Error fetching entry for edit:", err);
     }
@@ -236,7 +243,7 @@ const EntryListPage = ({ pageType }) => {
       if (updatedEntry.err) throw new Error(updatedEntry.err);
       setIsFormOpen(false);
       setEditingEntry(null);
-      fetchEntries(); // Refresh entries after updating
+      fetchEntries();
     } catch (err) {
       console.log("Error updating entry:", err);
     }
@@ -285,179 +292,180 @@ const EntryListPage = ({ pageType }) => {
   };
 
   return (
-    <div className="entry-list-page">
-      <div className="entry-list-container">
-        <div className="entry-list-header">
-          <button onClick={handleNewEntry} className="new-entry-button">
-            New Entry
-          </button>
-        </div>
+    <div className="entry-list-page-wrapper">
+      <div className="entry-list-page">
+        <div className="entry-list-container">
+          <div className="entry-list-header">
+            <button onClick={handleNewEntry} className="new-entry-button">
+              New Entry
+            </button>
+          </div>
 
-        <div className="page-content">
-          <aside className="categories-sidebar">
-            <h3 className="sidebar-title">CATEGORIES</h3>
-            <div className="category-list">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  className={`category-item ${
-                    selectedCategory === category.id ? "active" : ""
-                  }`}
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  <span className="category-icon">{category.icon}</span>
-                  <span className="category-label">{category.label}</span>
-                </button>
-              ))}
-            </div>
-          </aside>
-
-          <main className="entries-main">
-            {/* Sort Controls */}
-            {filteredEntries.length > 0 && (
-              <div className="sort-controls">
-                <label htmlFor="sort-select" className="sort-label">
-                  Sort by:
-                </label>
-                <select
-                  id="sort-select"
-                  value={sortOrder}
-                  onChange={(e) => handleSortChange(e.target.value)}
-                  className="sort-select"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                </select>
-              </div>
-            )}
-
-            {filteredEntries.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="50"
-                    height="50"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="black"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-sparkle-icon lucide-sparkle"
+          <div className="page-content">
+            <aside className="categories-sidebar">
+              <h3 className="sidebar-title">CATEGORIES</h3>
+              <div className="category-list">
+                {categories.map((category) => (
+                  <button
+                    key={category.id}
+                    className={`category-item ${
+                      selectedCategory === category.id ? "active" : ""
+                    }`}
+                    onClick={() => handleCategoryClick(category.id)}
                   >
-                    <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
-                  </svg>
-                </div>
-                <h2 className="empty-title">Start Your Journey</h2>
-                <p className="empty-description">
-                  Create your first entry to begin tracking your growth
-                </p>
-                <button
-                  onClick={handleNewEntry}
-                  className="create-entry-button"
-                >
-                  Create Entry
-                </button>
+                    <span className="category-icon">{category.icon}</span>
+                    <span className="category-label">{category.label}</span>
+                  </button>
+                ))}
               </div>
-            ) : (
-              <>
-                <div className="entries-grid">
-                  {currentEntries.map((entry) => (
-                    <div key={entry._id} className="entry-card">
-                      <div className="entry-card-header">
-                        <div
-                          className="entry-icon"
-                          style={{
-                            backgroundColor: getCategoryColor(
-                              entry.entryCategory
-                            ),
-                          }}
-                        >
-                          {getCategoryIcon(entry.entryCategory)}
-                        </div>
-                        <div className="entry-meta">
-                          <h3 className="entry-title">{entry.title}</h3>
-                          <div className="entry-info">
-                            <span className="entry-date">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-calendar-icon lucide-calendar"
-                              >
-                                <path d="M8 2v4" />
-                                <path d="M16 2v4" />
-                                <rect
-                                  width="18"
-                                  height="18"
-                                  x="3"
-                                  y="4"
-                                  rx="2"
-                                />
-                                <path d="M3 10h18" />
-                              </svg>{" "}
-                              {new Date(entry.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )}
-                            </span>
-                            <span className="entry-subcategory">
-                              {getCategoryLabel(entry.entryCategory)}
-                            </span>
-                            <span className="entry-type-badge">
-                              {entry.entryType}
-                            </span>
+            </aside>
+
+            <main className="entries-main">
+              {filteredEntries.length > 0 && (
+                <div className="sort-controls">
+                  <label htmlFor="sort-select" className="sort-label">
+                    Sort by:
+                  </label>
+                  <select
+                    id="sort-select"
+                    value={sortOrder}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                    className="sort-select"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                  </select>
+                </div>
+              )}
+
+              {filteredEntries.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="50"
+                      height="50"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="black"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-sparkle-icon lucide-sparkle"
+                    >
+                      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
+                    </svg>
+                  </div>
+                  <h2 className="empty-title">Start Your Journey</h2>
+                  <p className="empty-description">
+                    Create your first entry to begin tracking your growth
+                  </p>
+                  <button
+                    onClick={handleNewEntry}
+                    className="create-entry-button"
+                  >
+                    Create Entry
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="entries-grid">
+                    {currentEntries.map((entry) => (
+                      <div key={entry._id} className="entry-card">
+                        <div className="entry-card-header">
+                          <div
+                            className="entry-icon"
+                            style={{
+                              backgroundColor: getCategoryColor(
+                                entry.entryCategory
+                              ),
+                            }}
+                          >
+                            {getCategoryIcon(entry.entryCategory)}
+                          </div>
+                          <div className="entry-meta">
+                            <h3 className="entry-title">{entry.title}</h3>
+                            <div className="entry-info">
+                              <span className="entry-date">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="lucide lucide-calendar-icon lucide-calendar"
+                                >
+                                  <path d="M8 2v4" />
+                                  <path d="M16 2v4" />
+                                  <rect
+                                    width="18"
+                                    height="18"
+                                    x="3"
+                                    y="4"
+                                    rx="2"
+                                  />
+                                  <path d="M3 10h18" />
+                                </svg>{" "}
+                                {new Date(entry.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  }
+                                )}
+                              </span>
+                              <span className="entry-subcategory">
+                                {getCategoryLabel(entry.entryCategory)}
+                              </span>
+                              <span className="entry-type-badge">
+                                {entry.entryType}
+                              </span>
+                            </div>
                           </div>
                         </div>
+
+                        <p className="entry-description">
+                          {entry.description?.substring(0, 200)}
+                          {entry.description?.length > 200 ? "..." : ""}
+                        </p>
+
+                        <button
+                          onClick={() => handleViewDetails(entry._id)}
+                          className="view-details-button"
+                        >
+                          View Details
+                        </button>
+                        <br />
+                        <button
+                          onClick={() => handleEditEntry(entry._id)}
+                          className="view-details-button"
+                        >
+                          Edit Entry
+                        </button>
                       </div>
+                    ))}
+                  </div>
 
-                      <p className="entry-description">
-                        {entry.description?.substring(0, 200)}
-                        {entry.description?.length > 200 ? "..." : ""}
-                      </p>
-
+                  {totalPages > 1 && (
+                    <div className="pagination">
                       <button
-                        onClick={() => handleViewDetails(entry._id)}
-                        className="view-details-button"
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="pagination-button"
                       >
-                        View Details
+                        Previous
                       </button>
-                      <br />
-                      <button
-                        onClick={() => handleEditEntry(entry._id)}
-                        className="view-details-button"
-                      >
-                        Edit Entry
-                      </button>
-                    </div>
-                  ))}
-                </div>
 
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div className="pagination">
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="pagination-button"
-                    >
-                      Previous
-                    </button>
-
-                    <div className="pagination-numbers">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                        (number) => (
+                      <div className="pagination-numbers">
+                        {Array.from(
+                          { length: totalPages },
+                          (_, i) => i + 1
+                        ).map((number) => (
                           <button
                             key={number}
                             onClick={() => paginate(number)}
@@ -467,28 +475,27 @@ const EntryListPage = ({ pageType }) => {
                           >
                             {number}
                           </button>
-                        )
-                      )}
-                    </div>
+                        ))}
+                      </div>
 
-                    <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="pagination-button"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </main>
+                      <button
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="pagination-button"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </main>
+          </div>
         </div>
       </div>
 
       <Footer />
 
-      {/* Form Popup Modal */}
       {isFormOpen && (
         <div className="form-modal-overlay" onClick={handleCloseForm}>
           <div
