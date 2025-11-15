@@ -54,7 +54,6 @@ const App = () => {
     }
   };
 
-  // Add the update function from the branch
   const handleUpdateEntry = async (formData, entryId) => {
     try {
       const updatedEntry = await entriesService.update(entryId, formData);

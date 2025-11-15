@@ -11,6 +11,7 @@ const EntryListPage = ({ pageType }) => {
   const [filteredEntries, setFilteredEntries] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingEntry, setEditingEntry] = useState(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -198,11 +199,13 @@ const EntryListPage = ({ pageType }) => {
   };
 
   const handleNewEntry = () => {
+    setEditingEntry(null); // Clear any editing entry
     setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
     setIsFormOpen(false);
+    setEditingEntry(null); // Clear editing entry when closing
   };
 
   const handleAddEntry = async (formData) => {
@@ -213,6 +216,29 @@ const EntryListPage = ({ pageType }) => {
       fetchEntries(); // Refresh entries after adding
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleEditEntry = async (entryId) => {
+    try {
+      // Fetch the full entry details
+      const entry = await entryService.show(entryId);
+      setEditingEntry(entry); // Set the entry to be edited
+      setIsFormOpen(true); // Open the form
+    } catch (err) {
+      console.log("Error fetching entry for edit:", err);
+    }
+  };
+
+  const handleUpdateEntry = async (formData, entryId) => {
+    try {
+      const updatedEntry = await entryService.update(entryId, formData);
+      if (updatedEntry.err) throw new Error(updatedEntry.err);
+      setIsFormOpen(false);
+      setEditingEntry(null);
+      fetchEntries(); // Refresh entries after updating
+    } catch (err) {
+      console.log("Error updating entry:", err);
     }
   };
 
@@ -407,6 +433,13 @@ const EntryListPage = ({ pageType }) => {
                       >
                         View Details
                       </button>
+                      <br />
+                      <button
+                        onClick={() => handleEditEntry(entry._id)}
+                        className="view-details-button"
+                      >
+                        Edit Entry
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -467,6 +500,8 @@ const EntryListPage = ({ pageType }) => {
             </button>
             <EntryForm
               handleAddEntry={handleAddEntry}
+              handleUpdateEntry={handleUpdateEntry}
+              selected={editingEntry}
               defaultType={
                 pageType === "achievement" ? "Achievement" : "Lesson"
               }

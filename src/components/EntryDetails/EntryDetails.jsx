@@ -5,7 +5,11 @@ import * as entriesService from "../../services/entryService";
 import { UserContext } from "../../contexts/UserContext";
 import "./EntryDetails.css";
 
-const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEntry }) => {
+const EntryDetails = ({
+  handleDeleteEntry,
+  handleRefreshEntries,
+  handleUpdateEntry,
+}) => {
   const { entryId } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
@@ -20,6 +24,7 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
       }
       try {
         const entryData = await entriesService.show(entryId);
+        console.log("Fetched entry data:", entryData); // Debug log
         setEntry(entryData);
       } catch (error) {
         console.error("Error fetching entry:", error);
@@ -32,11 +37,16 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
     e.preventDefault();
     if (!reflectionText.trim()) return;
 
-    const newReflection = await entriesService.createReflection(entryId, {
-      reflectionText: reflectionText,
-    });
-    setEntry(newReflection);
-    setReflectionText("");
+    try {
+      const newReflection = await entriesService.createReflection(entryId, {
+        reflectionText: reflectionText,
+      });
+
+      setEntry(newReflection);
+      setReflectionText("");
+    } catch (error) {
+      console.error("Error adding reflection:", error);
+    }
   };
 
   const handleClose = () => {
@@ -96,7 +106,7 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
   }
 
   // Determine icon and colors based on entry type
-  const isAchievement = entry.entryType === "achievement";
+  const isAchievement = entry.entryType?.toLowerCase() === "achievement";
   const icon = isAchievement ? (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -139,14 +149,14 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
   const sections = [];
 
   if (isAchievement) {
-    if (entry.initialSituation) {
+    if (entry.initialSituation && entry.initialSituation.trim()) {
       sections.push({
         title: "How I Got There",
         content: entry.initialSituation,
         className: "section-teal",
       });
     }
-    if (entry.actionsImplemented) {
+    if (entry.actionsImplemented && entry.actionsImplemented.trim()) {
       sections.push({
         title: "What Worked Well",
         content: entry.actionsImplemented,
@@ -154,14 +164,14 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
       });
     }
   } else {
-    if (entry.keyOutcomes) {
+    if (entry.keyOutcomes && entry.keyOutcomes.trim()) {
       sections.push({
         title: "How I Felt",
         content: entry.keyOutcomes,
         className: "section-purple",
       });
     }
-    if (entry.improvementPlan) {
+    if (entry.improvementPlan && entry.improvementPlan.trim()) {
       sections.push({
         title: "What I'd Do Differently",
         content: entry.improvementPlan,
@@ -343,7 +353,7 @@ const EntryDetails = ({ handleDeleteEntry, handleRefreshEntries, handleUpdateEnt
             </form>
 
             {/* Reflections List */}
-            {!entry.reflections?.length ? (
+            {!entry.reflections || entry.reflections.length === 0 ? (
               <p className="no-reflections">No reflections yet.</p>
             ) : (
               <div className="reflections-list">
