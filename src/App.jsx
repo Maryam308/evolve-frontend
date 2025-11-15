@@ -1,5 +1,11 @@
 import { useContext, useState, useEffect } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -13,6 +19,29 @@ import EntryListPage from "./components/EntryListPage/EntryListPage";
 import { UserContext } from "./contexts/UserContext";
 import * as entriesService from "./services/entryService";
 
+// Wrapper component to show list page with modal on top
+const ListPageWithModal = ({
+  pageType,
+  handleDeleteEntry,
+  handleRefreshEntries,
+  handleUpdateEntry,
+}) => {
+  const { entryId } = useParams();
+
+  return (
+    <>
+      <EntryListPage pageType={pageType} />
+      {entryId && (
+        <EntryDetails
+          handleDeleteEntry={handleDeleteEntry}
+          handleRefreshEntries={handleRefreshEntries}
+          handleUpdateEntry={handleUpdateEntry}
+        />
+      )}
+    </>
+  );
+};
+
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -20,6 +49,10 @@ const App = () => {
 
   const [entries, setEntries] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Check if we're on sign-in or sign-up route
+  const isAuthRoute =
+    location.pathname === "/sign-in" || location.pathname === "/sign-up";
 
   useEffect(() => {
     const fetchAllEntries = async () => {
@@ -71,33 +104,76 @@ const App = () => {
       <NavBar />
       <div className="main-content">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+          <Route
+            path="/sign-in"
+            element={
+              user ? (
+                <Dashboard />
+              ) : (
+                <>
+                  <Landing />
+                  <SignInForm />
+                </>
+              )
+            }
+          />
+          <Route
+            path="/sign-up"
+            element={
+              user ? (
+                <Dashboard />
+              ) : (
+                <>
+                  <Landing />
+                  <SignUpForm />
+                </>
+              )
+            }
+          />
+
+          {/* Protected Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/entries" element={<EntryList entries={entries} />} />
-          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
-          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
+
+          {/* List Pages - Both with and without entry details */}
           <Route
             path="/achievements"
             element={<EntryListPage pageType="achievement" />}
           />
           <Route
-            path="/lessons"
-            element={<EntryListPage pageType="lesson" />}
-          />
-
-          <Route
             path="/achievements/entries/:entryId"
             element={
-              <EntryDetails
+              <ListPageWithModal
+                pageType="achievement"
                 handleDeleteEntry={handleDeleteEntry}
                 handleRefreshEntries={handleRefreshEntries}
                 handleUpdateEntry={handleUpdateEntry}
               />
             }
+          />
+
+          <Route
+            path="/lessons"
+            element={<EntryListPage pageType="lesson" />}
           />
           <Route
             path="/lessons/entries/:entryId"
             element={
+              <ListPageWithModal
+                pageType="lesson"
+                handleDeleteEntry={handleDeleteEntry}
+                handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
+              />
+            }
+          />
+
+          {/* Fallback for generic entries */}
+          <Route
+            path="/entries/:entryId"
+            element={
               <EntryDetails
                 handleDeleteEntry={handleDeleteEntry}
                 handleRefreshEntries={handleRefreshEntries}
@@ -105,39 +181,8 @@ const App = () => {
               />
             }
           />
-          <Route path="/entries/:entryId" element={<Dashboard />} />
         </Routes>
       </div>
-
-      {/* Modal overlays */}
-      <Routes>
-        <Route
-          path="/achievements/entries/:entryId"
-          element={
-            <EntryDetails
-              handleDeleteEntry={handleDeleteEntry}
-              handleUpdateEntry={handleUpdateEntry}
-            />
-          }
-        />
-        <Route
-          path="/lessons/entries/:entryId"
-          element={
-            <EntryDetails
-              handleDeleteEntry={handleDeleteEntry}
-              handleUpdateEntry={handleUpdateEntry}
-            />
-          }
-        />
-
-        <Route
-          path="/entries"
-          element={<EntryList entries={entries} onDelete={handleDeleteEntry} />}
-        />
-
-        {!user && <Route path="/sign-in" element={<SignInForm />} />}
-        {!user && <Route path="/sign-up" element={<SignUpForm />} />}
-      </Routes>
     </>
   );
 };
