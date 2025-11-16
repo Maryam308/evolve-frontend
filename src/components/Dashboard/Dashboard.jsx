@@ -19,7 +19,7 @@ const Dashboard = () => {
         const fetchedEntries = await entryService.index();
         setEntries(fetchedEntries);
 
-        // Calculate statistics - FIXED: using correct capitalization
+        // Calculate statistics
         const achievements = fetchedEntries.filter(
           (entry) => entry.entryType === "Achievement"
         ).length;
