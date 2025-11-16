@@ -193,6 +193,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
+  margin-bottom: 5px;
 }
 
 .view-details-button:hover {
