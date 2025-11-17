@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { Link } from "react-router";
 
 const EntryList = (props) => {
@@ -13,6 +14,8 @@ const EntryList = (props) => {
           </Link>
         </article>
 =======
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import DeletePopup from "../DeletePopup/DeletePopup";
@@ -23,7 +26,7 @@ const EntryList = ({ entries, onDelete }) => {
 
   const handleConfirmDelete = () => {
     if (selectedEntry) {
-      onDelete(selectedEntry._id); 
+      onDelete(selectedEntry._id);
       setSelectedEntry(null);
       setShowDelete(false);
     }
@@ -51,7 +54,10 @@ const EntryList = ({ entries, onDelete }) => {
             Delete
           </button>
         </div>
+<<<<<<< HEAD
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
       ))}
 
       {showDelete && selectedEntry && (

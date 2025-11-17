@@ -9,14 +9,20 @@ const NavBar = () => {
   const { user, setUser } = useContext(UserContext);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
   const handleSignOut = () => {
     localStorage.removeItem("token");
     setUser(null);
     navigate("/");
   };
 
+<<<<<<< HEAD
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
   return (
     <nav className="navbar">
       <Link to="/" className="logo">
@@ -28,10 +34,10 @@ const NavBar = () => {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-sparkles-icon lucide-sparkles"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-sparkles-icon lucide-sparkles"
           >
             <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
             <path d="M20 2v4" />
@@ -43,12 +49,15 @@ const NavBar = () => {
       </Link>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       <div className="nav-buttons">
         {user ? (
           <div>
             <Link to="/entries" className="nav-button-secondary">
               Entries
 =======
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
       {user ? (
         <>
           <div className="nav-tabs">
@@ -75,12 +84,13 @@ const NavBar = () => {
               }`}
             >
               Lessons
+<<<<<<< HEAD
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
             </Link>
-            <button onClick={handleSignout} className="nav-button-secondary">
-              Sign Out
-            </button>
           </div>
+<<<<<<< HEAD
 <<<<<<< HEAD
         ) : (
           <>
@@ -94,6 +104,8 @@ const NavBar = () => {
         )}
       </div>
 =======
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
 
           <div className="nav-right">
             <span className="user-greeting">Hello {user.username}</span>
@@ -112,7 +124,10 @@ const NavBar = () => {
           </Link>
         </div>
       )}
+<<<<<<< HEAD
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
     </nav>
   );
 };

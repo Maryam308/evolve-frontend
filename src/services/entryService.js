@@ -6,9 +6,7 @@ const index = async () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const create = async (entryFormData) => {
@@ -24,9 +22,7 @@ const create = async (entryFormData) => {
 
     if (!res.ok) throw new Error("Failed to create entry");
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 const show = async (entryId) => {
@@ -35,11 +31,13 @@ const show = async (entryId) => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
 const update = async (entryId, entryFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -51,11 +49,10 @@ const update = async (entryId, entryFormData) => {
       body: JSON.stringify(entryFormData),
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
+<<<<<<< HEAD
 const deleteEntry = async (entryId) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -72,6 +69,8 @@ const deleteEntry = async (entryId) => {
 =======
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
 
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
 const createReflection = async (entryId, reflectionFormData) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}/reflections`, {
@@ -83,15 +82,16 @@ const createReflection = async (entryId, reflectionFormData) => {
       body: JSON.stringify(reflectionFormData),
     });
     return res.json();
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 export { index, create, show, update, deleteEntry, createReflection };
 =======
 
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
 const deleteEntry = async (entryId) => {
   try {
     const res = await fetch(`${BASE_URL}/${entryId}`, {
@@ -108,10 +108,12 @@ const deleteEntry = async (entryId) => {
 
     const data = await res.json().catch(() => null);
     return data;
-  } catch (error) {
-    console.log("Error deleting entry:", error);
-  }
+  } catch (error) {}
 };
 
+<<<<<<< HEAD
 export { index, create, show, createReflection, deleteEntry };
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+export { index, create, show, update, createReflection, deleteEntry };
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37

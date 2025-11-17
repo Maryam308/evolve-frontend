@@ -1,5 +1,11 @@
 import { useContext, useState, useEffect } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -13,13 +19,36 @@ import EntryListPage from "./components/EntryListPage/EntryListPage";
 import { UserContext } from "./contexts/UserContext";
 import * as entriesService from "./services/entryService";
 
+// Wrapper component to show list page with modal on top
+const ListPageWithModal = ({
+  pageType,
+  handleDeleteEntry,
+  handleRefreshEntries,
+  handleUpdateEntry,
+}) => {
+  const { entryId } = useParams();
+
+  return (
+    <>
+      <EntryListPage pageType={pageType} />
+      {entryId && (
+        <EntryDetails
+          handleDeleteEntry={handleDeleteEntry}
+          handleRefreshEntries={handleRefreshEntries}
+          handleUpdateEntry={handleUpdateEntry}
+        />
+      )}
+    </>
+  );
+};
+
 const App = () => {
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
-
   const location = useLocation();
 
   const [entries, setEntries] = useState([]);
+<<<<<<< HEAD
 <<<<<<< HEAD
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -40,7 +69,13 @@ const App = () => {
     }
 =======
 
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Check if we're on sign-in or sign-up route
+  const isAuthRoute =
+    location.pathname === "/sign-in" || location.pathname === "/sign-up";
 
   useEffect(() => {
     const fetchAllEntries = async () => {
@@ -53,11 +88,14 @@ const App = () => {
     };
 
     if (user) fetchAllEntries();
-  }, [user]);
+  }, [user, refreshTrigger]);
 
   const handleRefreshEntries = () => {
     setRefreshTrigger((prev) => prev + 1);
+<<<<<<< HEAD
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
   };
 
   const handleDeleteEntry = async (entryId) => {
@@ -68,6 +106,7 @@ const App = () => {
 
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       const newEntry = await entriesService.create(formData);
       if (newEntry.err) {
         throw new Error(newEntry.err);
@@ -75,8 +114,14 @@ const App = () => {
       setIsFormOpen(false);
       setSelectedEntry(null);
       await fetchAllEntries();
+=======
+      await entriesService.deleteEntry(entryId);
+      setEntries(entries.filter((entry) => entry._id !== entryId));
+      console.log(`Entry ${entryId} deleted successfully`);
+      navigate("/dashboard");
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
     } catch (err) {
-      console.log(err);
+      console.error("Error deleting entry:", err);
     }
   };
 
@@ -86,6 +131,7 @@ const App = () => {
       if (updatedEntry.err) {
         throw new Error(updatedEntry.err);
       }
+<<<<<<< HEAD
       setIsFormOpen(false);
       setSelectedEntry(null);
       await fetchAllEntries();
@@ -96,8 +142,11 @@ const App = () => {
       console.log(`Entry ${entryId} deleted successfully`);
       navigate("/dashboard");
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+      setRefreshTrigger((prev) => prev + 1);
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
     } catch (err) {
-      console.error("Error deleting entry:", err);
+      console.error("Error updating entry:", err);
     }
   };
 
@@ -106,41 +155,86 @@ const App = () => {
       <NavBar />
       <div className="main-content">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={user ? <Dashboard /> : <Landing />} />
+          <Route
+            path="/sign-in"
+            element={
+              user ? (
+                <Dashboard />
+              ) : (
+                <>
+                  <Landing />
+                  <SignInForm />
+                </>
+              )
+            }
+          />
+          <Route
+            path="/sign-up"
+            element={
+              user ? (
+                <Dashboard />
+              ) : (
+                <>
+                  <Landing />
+                  <SignUpForm />
+                </>
+              )
+            }
+          />
+
+          {/* Protected Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/entries" element={<EntryList entries={entries} />} />
-          <Route path="/sign-in" element={user ? <Dashboard /> : <Landing />} />
-          <Route path="/sign-up" element={user ? <Dashboard /> : <Landing />} />
+
+          {/* List Pages - Both with and without entry details */}
           <Route
             path="/achievements"
             element={<EntryListPage pageType="achievement" />}
           />
           <Route
-            path="/lessons"
-            element={<EntryListPage pageType="lesson" />}
+            path="/achievements/entries/:entryId"
+            element={
+              <ListPageWithModal
+                pageType="achievement"
+                handleDeleteEntry={handleDeleteEntry}
+                handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
+              />
+            }
           />
 
           <Route
-            path="/achievements/entries/:entryId"
-            element={
-              <EntryDetails
-                handleDeleteEntry={handleDeleteEntry}
-                handleRefreshEntries={handleRefreshEntries}
-              />
-            }
+            path="/lessons"
+            element={<EntryListPage pageType="lesson" />}
           />
           <Route
             path="/lessons/entries/:entryId"
             element={
-              <EntryDetails
+              <ListPageWithModal
+                pageType="lesson"
                 handleDeleteEntry={handleDeleteEntry}
                 handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
               />
             }
           />
-          <Route path="/entries/:entryId" element={<Dashboard />} />
+
+          {/* Fallback for generic entries */}
+          <Route
+            path="/entries/:entryId"
+            element={
+              <EntryDetails
+                handleDeleteEntry={handleDeleteEntry}
+                handleRefreshEntries={handleRefreshEntries}
+                handleUpdateEntry={handleUpdateEntry}
+              />
+            }
+          />
         </Routes>
       </div>
+<<<<<<< HEAD
 
       {/* Modal overlays */}
       <Routes>
@@ -204,9 +298,10 @@ const App = () => {
         {!user && <Route path="/sign-up" element={<SignUpForm />} />}
       </Routes>
 >>>>>>> 2fe9bda1c419a618c39a8605383b7a60467c3e53
+=======
+>>>>>>> 04412e1e4da9d03cbc691c25010c67d7dbe6be37
     </>
   );
 };
 
 export default App;
- 

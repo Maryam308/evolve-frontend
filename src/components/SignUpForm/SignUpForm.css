@@ -104,16 +104,50 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background-color: #ffffff;
+  color: #000000;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #8b5cf6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .form-group input::placeholder {
-  color: #d1d5db;
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+.form-group input::-webkit-input-placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+.form-group input::-moz-placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+.form-group input:-ms-input-placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus,
+.form-group input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-group input:autofill {
+  background-color: #ffffff !important;
+  color: #000000 !important;
 }
 
 .error-message {
