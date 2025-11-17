@@ -17,18 +17,24 @@ const Dashboard = () => {
     const fetchEntries = async () => {
       try {
         const fetchedEntries = await entryService.index();
-        setEntries(fetchedEntries);
 
-        // Calculate statistics
-        const achievements = fetchedEntries.filter(
+        // Filter entries for current user only
+        const userEntries = fetchedEntries.filter(
+          (entry) => entry.author._id === user._id || entry.author === user._id
+        );
+
+        setEntries(userEntries);
+
+        // Calculate statistics based on user's entries only
+        const achievements = userEntries.filter(
           (entry) => entry.entryType === "Achievement"
         ).length;
 
-        const lessons = fetchedEntries.filter(
+        const lessons = userEntries.filter(
           (entry) => entry.entryType === "Lesson"
         ).length;
 
-        const reflections = fetchedEntries.reduce(
+        const reflections = userEntries.reduce(
           (total, entry) => total + (entry.reflections?.length || 0),
           0
         );
