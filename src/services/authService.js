@@ -24,11 +24,6 @@ const signUp = async (formData) => {
       body: JSON.stringify(formData),
     });
 
-    // Check if response is OK before parsing
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
     const data = await handleResponse(res);
 
     if (data.err) {
@@ -53,11 +48,6 @@ const signIn = async (formData) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
-
-    // Check if response is OK before parsing
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
 
     const data = await handleResponse(res);
 
