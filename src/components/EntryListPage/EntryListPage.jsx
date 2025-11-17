@@ -498,13 +498,6 @@ const EntryListPage = ({ pageType }) => {
 
       {isFormOpen && (
         <div className="form-modal-overlay" onClick={handleCloseForm}>
-          <div
-            className="form-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button className="form-close-button" onClick={handleCloseForm}>
-              ✕
-            </button>
             <EntryForm
               handleAddEntry={handleAddEntry}
               handleUpdateEntry={handleUpdateEntry}
@@ -515,7 +508,6 @@ const EntryListPage = ({ pageType }) => {
               onClose={handleCloseForm}
             />
           </div>
-        </div>
       )}
     </div>
   );
