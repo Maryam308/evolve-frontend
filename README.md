@@ -15,6 +15,10 @@ The application serves as a comprehensive digital archive for achievements, less
 - **Planning Materials:** https://trello.com/invite/b/6905e72a348f6b584fcef071/ATTI6e185b994257cc5bd884870420abad64690291C7/evolve
 - **Back-End Repository:** https://github.com/Maryam308/evolve-backend.git
 
+## Sample Credentials - For Demo and Testing Purposes
+username: test2
+password: test2
+
 ## Attributions
 
 - [Lucide React](https://lucide.dev/) - Icon library
